@@ -4,7 +4,7 @@ import { Console }  from 'node:console'
 import { Writable } from 'node:stream'
 import { afterEach, suite, test }  from 'node:test'
 
-suite('@superhero/core', () =>
+suite('@superhero/log', () =>
 {
   // Create a silent writable stream.
   class SilentStream extends Writable 

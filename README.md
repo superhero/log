@@ -99,7 +99,7 @@ node test.js
 ### Test Coverage
 
 ```
-▶ @superhero/core
+▶ @superhero/log
   ✔ Info (3.458554ms)
   ✔ Warn (1.109146ms)
   ✔ Fail (1.093924ms)
@@ -118,7 +118,7 @@ node test.js
   ✔ Distinguish types in observed global log messages (0.664552ms)
   ✔ Colored controlled format (0.741308ms)
   ✔ Supress (0.486298ms)
-✔ @superhero/core (19.472827ms)
+✔ @superhero/log (19.472827ms)
 
 tests 15
 suites 1
