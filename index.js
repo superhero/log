@@ -14,8 +14,9 @@ export default class Log extends EventEmitter
 
   console = new Console(process.stdout, process.stderr)
 
-  static colored = true
-  static global  = new EventEmitter()
+  static colored  = true
+  static global   = new EventEmitter()
+  static default  = {}
 
   constructor(config)
   {
@@ -27,9 +28,17 @@ export default class Log extends EventEmitter
     this.on('warn', (...args) => Log.global.emit('warn', this.config, ...args))
     this.on('fail', (...args) => Log.global.emit('fail', this.config, ...args))
 
-    this.on('info', (...args) => this.config.muteInfo || this.config.mute || this.console.info  ( this.format(...args) ))
-    this.on('warn', (...args) => this.config.muteWarn || this.config.mute || this.console.warn  ( this.format(...args) ))
-    this.on('fail', (...args) => this.config.muteFail || this.config.mute || this.console.error ( this.format(...args) ))
+    this.on('info', (...args) => (this.config.muteInfo  ?? Log.default.muteInfo) 
+                              || (this.config.mute      ?? Log.default.mute) 
+                              || (this.console.info(this.format(...args))))
+
+    this.on('warn', (...args) => (this.config.muteWarn  ?? Log.default.muteWarn) 
+                              || (this.config.mute      ?? Log.default.mute)
+                              || (this.console.warn(this.format(...args))))
+
+    this.on('fail', (...args) => (this.config.muteFail  ?? Log.default.muteFail) 
+                              || (this.config.mute      ?? Log.default.mute) 
+                              || (this.console.error(this.format(...args))))
   }
 
   format(...args)
