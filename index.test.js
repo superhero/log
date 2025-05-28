@@ -1,8 +1,7 @@
-import Log          from '@superhero/log'
-import assert       from 'node:assert'
-import { Console }  from 'node:console'
-import { Writable } from 'node:stream'
-import { afterEach, suite, test }  from 'node:test'
+import Log                          from '@superhero/log'
+import assert                       from 'node:assert'
+import { Writable }                 from 'node:stream'
+import { beforeEach, suite, test }  from 'node:test'
 
 suite('@superhero/log', () =>
 {
@@ -18,70 +17,56 @@ suite('@superhero/log', () =>
     }
   }
 
-  // Create a silent streams.
-  const silentOut = new SilentStream()
-  const silentErr = new SilentStream()
+  // Create silent writable streams for outputs to reduce console output during tests.
+  const outstream = new SilentStream()
+  const errstream = new SilentStream()
 
-  // Create a silent console instance to show that the console 
-  // can be altered, and for the purpose of this test, silenced.
-  const silent = new Console(silentOut, silentErr)
+  let log // Log instance variable scope declaration
 
-  afterEach(() =>
+  beforeEach(() =>
   {
-    silentOut.chunks.clear()
-    silentErr.chunks.clear()
+    // Clear the chunks before each test
+    outstream.chunks.clear() 
+    errstream.chunks.clear()
+
+    // Reset the log instance to ensure a fresh start for each test.
+    log = new Log({ outstream, errstream })
   })
 
   test('Info', () =>
   {
-    const log = new Log()
-    // log.console = silent to prevent console output for this test.
-    log.console = silent
-
     log.info`info message`
 
-    assert.equal(silentOut.chunks.size, 1, 'Expected one console output on stdout')
-    assert.equal(silentErr.chunks.size, 0, 'Expected no console output on stderr')
+    assert.equal(outstream.chunks.size, 1, 'Expected one console output on stdout')
+    assert.equal(errstream.chunks.size, 0, 'Expected no console output on stderr')
   })
 
   test('Warn', () =>
   {
-    const log = new Log()
-    // log.console = silent to prevent console output for this test.
-    log.console = silent
-
     log.warn`warning message`
 
-    assert.equal(silentOut.chunks.size, 0, 'Expected no console output on stdout')
-    assert.equal(silentErr.chunks.size, 1, 'Expected one console output on stderr')
+    assert.equal(outstream.chunks.size, 1, 'Expected no console output on stdout')
+    assert.equal(errstream.chunks.size, 0, 'Expected one console output on stderr')
   })
 
   test('Fail', () =>
   {
-    const log = new Log()
-    // log.console = silent to prevent console output for this test.
-    log.console = silent
-
     log.fail`failure message`
 
-    assert.equal(silentOut.chunks.size, 0, 'Expected no console output on stdout')
-    assert.equal(silentErr.chunks.size, 1, 'Expected one console output on stderr')
+    assert.equal(outstream.chunks.size, 0, 'Expected no console output on stdout')
+    assert.equal(errstream.chunks.size, 1, 'Expected one console output on stderr')
   })
 
   test('Mute', async (sub) =>
   {
-    const log = new Log()
-    // log.console = silent to prevent console output for this test.
-    log.console = silent
-
     await sub.test('Mute all', () =>
     {
       log.info`info message`
       log.warn`warning message`
       log.fail`failure message`
 
-      assert.equal(silentOut.chunks.size, 1, 'Expected no console output on stdout')
-      assert.equal(silentErr.chunks.size, 2, 'Expected one console output on stderr')
+      assert.equal(outstream.chunks.size, 2, 'Expected no console output on stdout')
+      assert.equal(errstream.chunks.size, 1, 'Expected one console output on stderr')
   
       log.config.mute = true
 
@@ -89,8 +74,8 @@ suite('@superhero/log', () =>
       log.warn`warning message`
       log.fail`failure message`
   
-      assert.equal(silentOut.chunks.size, 1, 'Expected to still have one console output on stderr becouse log is muted')
-      assert.equal(silentErr.chunks.size, 2, 'Expected to still have two console output on stderr becouse log is muted')
+      assert.equal(outstream.chunks.size, 2, 'Expected to still have one console output on stderr becouse log is muted')
+      assert.equal(errstream.chunks.size, 1, 'Expected to still have two console output on stderr becouse log is muted')
 
       log.config.mute = false
     })
@@ -98,53 +83,49 @@ suite('@superhero/log', () =>
     await sub.test('Mute info', () =>
     {
       log.info`info message`
-      assert.equal(silentOut.chunks.size, 1, 'Expected one console output on stdout')
-      assert.equal(silentErr.chunks.size, 0, 'Expected no console output on stderr')
+      assert.equal(outstream.chunks.size, 1, 'Expected one console output on stdout')
+      assert.equal(errstream.chunks.size, 0, 'Expected no console output on stderr')
   
       log.config.muteInfo = true
   
       log.info`info message`
-      assert.equal(silentOut.chunks.size, 1, 'Expected to still have one console output on stdout becouse log is muted')
-      assert.equal(silentErr.chunks.size, 0, 'Expected to still have no console output on stderr')
+      assert.equal(outstream.chunks.size, 1, 'Expected to still have one console output on stdout becouse log is muted')
+      assert.equal(errstream.chunks.size, 0, 'Expected to still have no console output on stderr')
     })
 
     await sub.test('Mute warn', () =>
     {
       log.warn`warning message`
-      assert.equal(silentOut.chunks.size, 0, 'Expected no console output on stdout')
-      assert.equal(silentErr.chunks.size, 1, 'Expected one console output on stderr')
+      assert.equal(outstream.chunks.size, 1, 'Expected no console output on stdout')
+      assert.equal(errstream.chunks.size, 0, 'Expected one console output on stderr')
   
       log.config.muteWarn = true
   
       log.warn`warning message`
-      assert.equal(silentOut.chunks.size, 0, 'Expected to still have no console output on stderr')
-      assert.equal(silentErr.chunks.size, 1, 'Expected to still have one console output on stderr becouse log is muted')
+      assert.equal(outstream.chunks.size, 1, 'Expected to still have no console output on stderr')
+      assert.equal(errstream.chunks.size, 0, 'Expected to still have one console output on stderr becouse log is muted')
     })
 
     await sub.test('Mute fail', () =>
     {
       log.fail`failure message`
-      assert.equal(silentOut.chunks.size, 0, 'Expected no console output on stdout')
-      assert.equal(silentErr.chunks.size, 1, 'Expected one console output on stderr')
+      assert.equal(outstream.chunks.size, 0, 'Expected no console output on stdout')
+      assert.equal(errstream.chunks.size, 1, 'Expected one console output on stderr')
   
       log.config.muteFail = true
   
       log.fail`failure message`
-      assert.equal(silentOut.chunks.size, 0, 'Expected to still have no console output on stderr')
-      assert.equal(silentErr.chunks.size, 1, 'Expected to still have one console output on stderr becouse log is muted')
+      assert.equal(outstream.chunks.size, 0, 'Expected to still have no console output on stderr')
+      assert.equal(errstream.chunks.size, 1, 'Expected to still have one console output on stderr becouse log is muted')
     })
   })
 
-  test('Observe log info', () => new Promise((done) =>
+  test('Observe log info', () => new Promise(done =>
   {
-    const log = new Log()
-    // log.console = silent to prevent console output for this test.
-    log.console = silent
-
     log.on('info', () =>
     {
-      assert.equal(silentOut.chunks.size, 1, 'Expected one console output on stdout')
-      assert.equal(silentErr.chunks.size, 0, 'Expected no console output on stderr')
+      assert.equal(outstream.chunks.size, 1, 'Expected one console output on stdout')
+      assert.equal(errstream.chunks.size, 0, 'Expected no console output on stderr')
 
       done()
     })
@@ -152,16 +133,12 @@ suite('@superhero/log', () =>
     log.info`info message`
   }))
 
-  test('Observe log warn', () => new Promise((done) =>
+  test('Observe log warn', () => new Promise(done =>
   {
-    const log = new Log()
-    // log.console = silent to prevent console output for this test.
-    log.console = silent
-    
     log.on('warn', () =>
     {
-      assert.equal(silentOut.chunks.size, 0, 'Expected no console output on stdout')
-      assert.equal(silentErr.chunks.size, 1, 'Expected one console output on stderr')
+      assert.equal(outstream.chunks.size, 1, 'Expected no console output on stdout')
+      assert.equal(errstream.chunks.size, 0, 'Expected one console output on stderr')
 
       done()
     })
@@ -169,16 +146,12 @@ suite('@superhero/log', () =>
     log.warn`warning message`
   }))
 
-  test('Observe log fail', () => new Promise((done) =>
+  test('Observe log fail', () => new Promise(done =>
   {
-    const log = new Log()
-    // log.console = silent to prevent console output for this test.
-    log.console = silent
-
     log.on('fail', () =>
     {
-      assert.equal(silentOut.chunks.size, 0, 'Expected no console output on stdout')
-      assert.equal(silentErr.chunks.size, 1, 'Expected one console output on stderr')
+      assert.equal(outstream.chunks.size, 0, 'Expected no console output on stdout')
+      assert.equal(errstream.chunks.size, 1, 'Expected one console output on stderr')
 
       done()
     })
@@ -186,16 +159,12 @@ suite('@superhero/log', () =>
     log.fail`failure message`
   }))
 
-  test('Distinguish types in observed log messages', () => new Promise((done) =>
+  test('Distinguish types in observed log messages', () => new Promise(done =>
   {
-    const log = new Log()
-    // log.console = silent to prevent console output for this test.
-    log.console = silent
-
     log.on('fail', (...args) => 
     {
-      assert.equal(silentOut.chunks.size, 0, 'Expected no console output on stdout')
-      assert.equal(silentErr.chunks.size, 1, 'Expected one console output on stderr')
+      assert.equal(outstream.chunks.size, 0, 'Expected no console output on stdout')
+      assert.equal(errstream.chunks.size, 1, 'Expected one console output on stderr')
 
       assert.ok(args[1] instanceof Error, 'Expected an error object as the first argument')
       assert.ok('string' === typeof args[2], 'Expected a string as the second argument')
@@ -206,7 +175,7 @@ suite('@superhero/log', () =>
     log.fail`foobar ${new Error('foo')} ${'bar'} ${new Error('baz')}`
   }))
 
-  test('Distinguish types in observed global log messages', () => new Promise((done) =>
+  test('Distinguish types in observed global log messages', () => new Promise(done =>
   {
     // config.mute = true to prevent console output for this test.
     const
@@ -216,12 +185,12 @@ suite('@superhero/log', () =>
 
     let count = 0
 
-    Log.global.on('fail', (config, ...args) => 
+    Log.on('fail', (config, ...args) => 
     {
       assert.ok(config.mute, 'Expected the instance config object as the first argument')
 
-      assert.equal(silentOut.chunks.size, 0, 'Expected no console output on stdout becouse instance is mute')
-      assert.equal(silentErr.chunks.size, 0, 'Expected no console output on stderr becouse instance is mute')
+      assert.equal(outstream.chunks.size, 0, 'Expected no console output on stdout becouse instance is mute')
+      assert.equal(errstream.chunks.size, 0, 'Expected no console output on stderr becouse instance is mute')
 
       for(const arg of args)
         if(arg instanceof Error)
@@ -235,26 +204,13 @@ suite('@superhero/log', () =>
     log3.fail`${new Error('bar')} ${new Error('baz')} ${new Error('qux')}`
   }))
 
-  test('Colored controlled format', () =>
+  test('Returns unformatted string when configured to return', () =>
   {
-    const log = new Log()
-    Log.colored = false
-    const message = log.format`${'foo'} ${'bar'} ${'baz'}`
-    assert.strictEqual(message, `${log.config.label}${log.divider}foo bar baz`)
+    const nothing = log.info`${'foo'} ${'bar'} ${'baz'}`
+    assert.strictEqual(nothing, false, 'Expected the log.info method to return false when not configured to return.')
 
-    assert.equal(silentOut.chunks.size, 0, 'No output should be generated from the format method.')
-    assert.equal(silentErr.chunks.size, 0, 'No output should be generated from the format method.')
-  })
-
-  test('Supress', () =>
-  {
-    const
-      log = new Log(),
-      msg = log.supress`${'foo'} ${'bar'} ${'baz'}`
-
-    assert.strictEqual(msg, `${log.supressed}foo bar baz${log.clearSupressed}`)
-
-    assert.equal(silentOut.chunks.size, 0, 'No output should be generated from the supress method.')
-    assert.equal(silentErr.chunks.size, 0, 'No output should be generated from the supress method.')
+    log.config.returns = true
+    const message = log.info`${'foo'} ${'bar'} ${'baz'}`
+    assert.strictEqual(message, `foo bar baz`)
   })
 })

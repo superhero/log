@@ -11,7 +11,8 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    ".": "./index.js"
+    ".": "./index.js",
+    "./*": "./lib/*.js"
   },
   "scripts": {
     "test": "node --trace-warnings --test --experimental-test-coverage"
