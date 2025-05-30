@@ -45,16 +45,18 @@ export default class Log
     muteWarn  : false,
     muteFail  : false,
     returns   : false,
+    tree      : false,
     ansi      : true,
+    reset     : true,
     outstream : process.stdout, 
     errstream : process.stderr,
     EOL       : EOL,
     border    : 'light',
-    name      : '[LOG]',
-    separator : ' ⇢ ',
-    label     : Log.ansi['dim'] + Log.ansi['bright-black'],
-    text      : Log.ansi['dim'],
-    data      : Log.ansi['bright-cyan']
+    label     : '[LOG]',
+    divider   : ' ⇢ ',
+    ansiLabel : 'dim bright-black',
+    ansiText  : 'dim',
+    ansiValue : 'bright-cyan'
   }
 
   constructor(config)
@@ -71,9 +73,9 @@ export default class Log
     this.inline = this.config.inline 
 
     // Set the specific configurations for each log method if configured
-    this.config.info && this.set.info(this.config.info)
-    this.config.warn && this.set.warn(this.config.warn)
-    this.config.fail && this.set.fail(this.config.fail)
+    if(this.config.info) this.set.info = this.config.info
+    if(this.config.warn) this.set.warn = this.config.warn
+    if(this.config.fail) this.set.fail = this.config.fail
 
     // Makes it possible for dependent code to hook into when a log event is 
     // emitted by any of the log instances...
@@ -105,6 +107,54 @@ export default class Log
   }
 
   /**
+   * Returns the configured label of the log instance.
+   * The label is used as a prefix for each log message.
+   * Defaults to an empty string if disabled.
+   *
+   * @returns {string} The label used by the log instance.
+   */
+  get label()
+  {
+    return this.config.label || ''
+  }
+
+  /**
+   * Sets the label of the log instance, or disables it if a falsy value is provided.
+   * The label is used as a prefix for each log message.
+   *
+   * @param {string} label - The label value to set for the log instance.
+   * @returns The updated label of the log instance.
+   */
+  set label(label)
+  {
+    return this.config.label = label
+  }
+
+  /**
+   * Returns the configured divider of the log instance.
+   * The divider is used to separate the label from the log message.
+   * Defaults to an empty string if disabled.
+   *
+   * @returns {string} The divider used by the log instance.
+   */
+  get divider()
+  {
+    return this.config.divider || ''
+  }
+
+  /**
+   * Sets the divider of the log instance, or disables it if a falsy value is provided.
+   * The divider is used to separate the label from the log message.
+   *
+   * @param {string} divider - The divider value to set for the log instance.
+   * @returns The updated divider of the log instance.
+   */
+  set divider(divider)
+  {
+    return this.config.divider = divider
+  }
+
+  /**
    * Transforms the provided text according to a specified transformation type.
    * @see Log.transform for available transformations.
    * 
@@ -112,7 +162,7 @@ export default class Log
    * @param {string} [transformation] - The type of transformation to apply.
    * @returns {string} The transformed string.
    */
-  transform(str, transformation = this.config.transform ?? 'circled')
+  transform(str, transformation = this.config.transformation ?? 'circled')
   {
     const
       key = String(transformation).toLowerCase(),
@@ -123,24 +173,131 @@ export default class Log
     : str
   }
 
+  #useTransformation(transformation)
+  {
+    return this.use({ transform:true, transformation })
+  }
+
+  get circled()
+  {
+    return this.#useTransformation('circled')
+  }
+
+  get circledFilled()
+  {
+    return this.#useTransformation('circled-filled')
+  }
+
+  // Alias for circledFilled
+  get filledCircles()
+  {
+    return this.circledFilled
+  }
+
+  get squared()
+  {
+    return this.#useTransformation('squared')
+  }
+
+  get squaredDashed()
+  {
+    return this.#useTransformation('squared-dashed')
+  }
+
+  // Alias for squaredDashed
+  get dashedSquares()
+  {
+    return this.squaredDashed
+  }
+
+  get squaredFilled()
+  {
+    return this.#useTransformation('squared-filled')
+  }
+
+  // Alias for squaredFilled
+  get filledSquares()
+  {
+    return this.squaredFilled
+  }
+
+  get upsideDown()
+  {
+    return this.#useTransformation('upside-down')
+  }
+
+  get smallCaps()
+  {
+    return this.#useTransformation('small-caps')
+  }
+
+  get doubleStruck()
+  {
+    return this.#useTransformation('double-struck')
+  }
+
+  get oldEnglish()
+  {
+    return this.#useTransformation('old-english')
+  }
+
+  get script()
+  {
+    return this.#useTransformation('script')
+  }
+
+  get serif()
+  {
+    return this.#useTransformation('serif')
+  }
+
+  get fat()
+  {
+    return this.#useTransformation('fat')
+  }
+
+  get fullwidth()
+  {
+    return this.#useTransformation('fullwidth')
+  }
+
+  get parenthesized()
+  {
+    return this.#useTransformation('parenthesized')
+  }
+
   #transform(template)
   {
     return this.config.transform
-    ? template.map(str => this.transform(str, this.config.transform))
+    ? template.map(str => this.transform(str))
     : template
   }
 
   #format(template, ...args)
   {
     template = this.#transform(template)
-    return this.config.colors 
-    ? this.#colors(template, ...args) 
-    : this.#simple(template, ...args)
+
+    if(this.config.ansi)
+    {
+      const
+        reset = this.config.reset || '' && Log.ansi.reset,
+        label = reset + this.ansi(this.config.ansiLabel),
+        text  = reset + this.ansi(this.config.ansiText)
+
+      return label + this.label + this.divider
+            + text + template.reduce((result, part, i) => result
+                                                        + reset + this.#inspect(args[i - 1], true) 
+                                                        + text  + part) + reset
+    }
+    else
+    {
+      return this.#simple(template, ...args)
+    }
   }
-  
+
   #simple(...args)
   {
-    return this.config.name + this.config.separator + this.#normal(...args)
+    return this.label + this.divider + this.#normal(...args)
   }
 
   #normal(template, ...args)
@@ -148,15 +305,42 @@ export default class Log
     return template.reduce((result, part, i) => result + this.#inspect(args[i - 1]) + part)
   }
 
+  #inspect(arg, ansi)
+  {
+    if('object' === typeof arg && null !== arg && this.config.tree)
+    {
+      return '\n' + this.tree(arg) + '\n'
+    }
+    else
+    {
+      return 'object' === typeof arg
+      ? util.inspect(arg, { colors: this.config.ansi && ansi })
+      : (ansi && this.config.ansi && this.config.ansiValue
+        ? this.ansi(this.config.ansiValue) : '') + arg
+    }
+  }
+
+  #write(stream, str)
+  {
+    this.config.mute || stream.write(str + this.config.EOL)
+  }
+
   /**
    * Mapps the provided format specifications to corresponding ANSI escape sequences.
-   * @see Log.ansi for available ANSI escape codes.
+   * Multiple codes can be provided as space-separated values where each code is interpreted as a
+   * separate ANSI escape code or key defined in the Log.ansi map object.
+   * @see Log.ansi for available pre mapped ANSI escape codes.
    * 
    * @param {string} codes - Spece seperated format specifications
    * @returns {string} ANSI escape sequences
    */
   ansi(codes)
   {
+    if(false === !!codes)
+    {
+      return ''
+    }
+
     return String(codes).split(' ').map(code =>
     {
       // all ansi codes are listed in lower case
@@ -201,29 +385,38 @@ export default class Log
     }).join('')
   }
 
-  #colors(template, ...args)
+  /**
+   * Maps the provided text, values, and label to corresponding ANSI escape sequences.
+   * This method allows to set the ANSI styles for text, values, and label independently.
+   *
+   * @param {string} [text] - The ANSI style for the text part of the log message.
+   * @param {string} [values] - The ANSI style for the values part of the log message.
+   * @param {string} [label] - The ANSI style for the label part of the log message.
+   * @returns {Log} The current instance of the Log class, allowing for method chaining.
+   *
+   * @example
+   * const log = new Log()
+   * log.color('green').info`Fabolus!`
+   */
+  color(text, values, label)
   {
-    const
-      clear = Log.ansi.clear,
-      label = clear + this.ansi(this.config.label),
-      text  = clear + this.ansi(this.config.text)
+    if(text !== null
+    && text !== undefined)
+    {
+      this.config.ansiText = this.ansi(text)
+    }
+    if(values !== null
+    && values !== undefined)
+    {
+      this.config.ansiValue = this.ansi(values)
+    }
+    if(label !== null
+    && label !== undefined)
+    {
+      this.config.ansiLabel = this.ansi(label)
+    }
 
-    return label + this.config.name + this.config.separator 
-          + text + template.reduce((result, part, i) => result
-                                                      + clear + this.#inspect(args[i - 1], true) 
-                                                      + text  + part) + clear
-  }
-
-  #inspect(arg, ansi)
-  {
-    return 'object' === typeof arg
-    ? util.inspect(arg, { colors: this.config.ansi && ansi })
-    : (this.config.ansi && ansi ? this.ansi(this.config.data) : '') + arg
-  }
-
-  #write(stream, str)
-  {
-    this.config.mute || stream.write(str + this.config.EOL)
+    return this
   }
 
   /**
@@ -286,7 +479,7 @@ export default class Log
   {
     this.config.muteInfo || this.#write(this.config.outstream, this.#format(...args))
     this.config.emitter?.emit('info', ...args)
-    return this.config.returns && this.#normal(...args)
+    if(this.config.returns) return this.#normal(...args)
   }
 
   /** 
@@ -299,7 +492,7 @@ export default class Log
   {
     this.config.muteWarn || this.#write(this.config.outstream, this.#format(...args))
     this.config.emitter?.emit('warn', ...args)
-    return this.config.returns && this.#normal(...args)
+    if(this.config.returns) return this.#normal(...args)
   }
 
   /** 
@@ -311,13 +504,27 @@ export default class Log
   {
     this.config.muteFail || this.#write(this.config.errstream, this.#format(...args))
     this.config.emitter?.emit('fail', ...args)
-    return this.config.returns && this.#normal(...args)
+    if(this.config.returns) return this.#normal(...args)
   }
 
   #useKaomoji(kaomoji)
   {
     const random = Math.floor(Math.random() * kaomoji.length)
     return this.use({ name:kaomoji[random] })
+  }
+
+  kaomoji(kaomoji)
+  {
+    if(kaomoji in Log.kaomoji)
+    {
+      return this.#useKaomoji(Log.kaomoji[kaomoji])
+    }
+    else
+    {
+      const error = new Error(`Unknown kaomoji "${kaomoji}"`)
+      error.code  = 'E_LOG_KAOMOJI_UNKNOWN'
+      throw error
+    }
   }
 
   get smile()
@@ -330,9 +537,24 @@ export default class Log
     return this.#useKaomoji(Log.kaomoji.happy)
   }
 
+  get ok()
+  {
+    return Math.floor(Math.random() * 10) % 2 ? this.smile : this.happy
+  }
+
+  get good()
+  {
+    return this.ok
+  }
+
   get confused()
   {
     return this.#useKaomoji(Log.kaomoji.confused)
+  }
+
+  get idk()
+  {
+    return this.confused
   }
 
   get sad()
@@ -343,6 +565,16 @@ export default class Log
   get angry()
   {
     return this.#useKaomoji(Log.kaomoji.angry)
+  }
+
+  get ko()
+  {
+    return Math.floor(Math.random() * 10) % 2 ? this.angry : this.sad
+  }
+
+  get bad()
+  {
+    return this.ko
   }
 
   get corrected()
@@ -358,11 +590,6 @@ export default class Log
    */
   tree(tree)
   {
-    if('object' !== typeof tree)
-    {
-      return String(tree)
-    }
-
     const 
       borders = String(this.config.border).toLowerCase(),
       map     = Log.border[borders] ?? Log.border.light
@@ -372,69 +599,81 @@ export default class Log
     {
       output += this.config.EOL + childTree
     }
-    return output
+    
+    return output.trim()
   }
 
-  * #treeRecursion(children, prefix, map)
+  * #treeRecursion(children, prefix, map, hasLast)
   {
-    if(Array.isArray(children))
+    switch(Object.prototype.toString.call(children))
     {
-      for(let i = 0; i < children.length; i++)
+      case '[object Array]':
       {
-        const
-          child       = children[i],
-          isLast      = i === children.length - 1,
-          branch      = isLast 
-                      ? map.bottomLeft + map.horizontal
-                      : map.teeLeft    + map.horizontal,
-          nextPrefix  = isLast 
-                      ? '   '
-                      : map.vertical + '  '
-  
-        if(Array.isArray(child))
+        for(let i = 0; i < children.length; i++)
         {
-          if(child.length)
+          const
+            child       = children[i],
+            isLast      = i === children.length - 1,
+            branch      = isLast 
+                        ? map.bottomLeft + map.horizontal
+                        : map.teeLeft    + map.horizontal,
+            nextPrefix  = isLast 
+                        ? '   '
+                        : map.vertical + '  '
+    
+          if(Array.isArray(child))
           {
-            yield prefix + branch + map.teeUp + map.horizontal + ' ' + String(child[0])
-            yield * this.#treeRecursion(child.slice(1), prefix + nextPrefix, map)
+            if(child.length)
+            {
+              yield prefix + branch + map.horizontal + map.teeUp + map.horizontal + ' ' + String(child[0])
+              yield * this.#treeRecursion(child.slice(1), prefix + nextPrefix, map)
+            }
+          }
+          else if('object' === typeof child && null !== child)
+          {
+            yield * this.#treeRecursion(child, prefix, map, isLast ? undefined : false)
+          }
+          else
+          {
+            yield prefix + branch + ' ' + String(child)
           }
         }
-        else if('object' === typeof child && null !== child)
+        break
+      }
+      case '[object Object]':
+      {
+        const entries = Object.entries(children)
+        for(let i = 0; i < entries.length; i++)
         {
-          for(const [ key, nested ] of Object.entries(child))
+          const [ key, nested ] = entries[i]
+          const 
+            isLast      = hasLast ?? i === entries.length - 1,
+            branch      = isLast 
+                        ? map.bottomLeft + map.horizontal
+                        : map.teeLeft    + map.horizontal,
+            nextPrefix  = isLast 
+                        ? '   '
+                        : map.vertical + '  '
+  
+          if(typeof nested === 'object' 
+          && null !== nested)
           {
             yield prefix + branch + ' ' + String(key)
             yield * this.#treeRecursion(nested, prefix + nextPrefix, map)
           }
+          else
+          {
+            yield prefix + branch + ' ' + String(key)
+                + '\n' 
+                + prefix + nextPrefix + map.bottomLeft + map.horizontal + ' ' + String(nested)
+          }
         }
-        else
-        {
-          yield prefix + branch + ' ' + String(child)
-        }
+        break
       }
-    }
-    else if('object' === typeof children && null !== children)
-    {
-      const entries = Object.entries(children)
-      for(let i = 0; i < entries.length; i++)
+      default:
       {
-        const [ key, nested ] = entries[i]
-        const 
-          isLast      = i === entries.length - 1,
-          branch      = isLast 
-                      ? map.bottomLeft + map.horizontal
-                      : map.teeLeft    + map.horizontal,
-          nextPrefix  = isLast 
-                      ? '   '
-                      : map.vertical + '  '
-
-        yield prefix + branch + ' ' + String(key)
-        yield * this.#treeRecursion(nested, prefix + nextPrefix, map)
+        yield prefix + ' ' + String(children)
       }
-    }
-    else
-    {
-      yield prefix + String(children)
     }
   }
 }
