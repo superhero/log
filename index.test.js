@@ -42,6 +42,17 @@ suite('@superhero/log', () =>
     log.divider           = false
   })
 
+  test('Simple construction of the Log instance', () =>
+  {
+    const log = new Log({ outstream, errstream })
+    log.info`This is a test log message`
+    assert.equal(outstream.chunks.length, 1, 'Expected one out stream message')
+    assert.equal(errstream.chunks.length, 0, 'Expected no err stream message')
+    assert.equal(outstream.chunks[0], 
+      '\x1B[0m\x1B[2m\x1B[90m[LOG] ⇢ \x1B[0m\x1B[2mThis is a test log message\x1B[0m\n', 
+      'Expected a specific log message in the out stream')
+  })
+
   test('Info', () =>
   {
     assert.equal(outstream.chunks.length, 0, 'Expected no previous out stream messages')

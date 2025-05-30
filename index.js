@@ -280,7 +280,7 @@ export default class Log
     if(this.config.ansi)
     {
       const
-        reset = this.config.reset || '' && Log.ansi.reset,
+        reset = this.config.reset ? Log.ansi.reset : '',
         label = reset + this.ansi(this.config.ansiLabel),
         text  = reset + this.ansi(this.config.ansiText)
 
