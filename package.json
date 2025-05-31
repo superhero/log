@@ -1,6 +1,6 @@
 {
   "name": "@superhero/log",
-  "version": "4.1.2",
+  "version": "4.1.3",
   "description": "A simple logger - intended to make it easy to configure, control and extend application log behaviour.",
   "keywords": [
     "logger",
