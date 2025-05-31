@@ -60,7 +60,9 @@ export default class Log
     divider   : ' ⇢ ',
     ansiLabel : 'dim bright-black',
     ansiText  : 'dim',
-    ansiValue : 'bright-cyan'
+    ansiValue : 'bright-cyan',
+    ansiTable : 'dim bright-yellow',
+    ansiTree  : 'dim bright-black'
   }
 
   constructor(config)
@@ -532,7 +534,14 @@ export default class Log
     && 'object' === typeof arg 
     && null !== arg)
     {
-      return '\n' + this.tree(arg) + '\n'
+      try
+      {
+        return this.tree(arg).trim()
+      }
+      catch(reason)
+      {
+        // ... ignore the error, and fallback to default inspection
+      }
     }
 
     if(this.config.table
@@ -541,7 +550,7 @@ export default class Log
     {
       try
       {
-        return '\n' + this.table(arg) + '\n'
+        return this.table(arg).trim()
       }
       catch(reason)
       {
@@ -819,6 +828,20 @@ export default class Log
   }
 
   /**
+   * Strips ANSI escape codes from the provided string.
+   * This is useful for removing formatting from strings before processing or displaying them.
+   *
+   * @param {string} str - The string from which to remove ANSI escape codes.
+   * @returns {string} The string with ANSI escape codes removed.
+   */
+  stripAnsi(str)
+  {
+    return 'string' === typeof str 
+          ? String(str).replace(/\x1B\[[0-9;]*m/g, '') 
+          : str
+  }
+
+  /**
    * Creates a tree structure from the provided nested object/array.
    * 
    * @param {Object|Array} tree - The object or array to be transformed into a tree structure.
@@ -827,11 +850,14 @@ export default class Log
   tree(tree)
   {
     const 
-      borders = String(this.config.border).toLowerCase(),
-      map     = Log.border[borders] ?? Log.border.light
+      name    = Log.filter.dashCase(this.config.border),
+      borders = Log.border[name] ?? Log.border.light,
+      ansi    = str => this.config.ansi && this.config.ansiTree
+              ? this.ansi(this.config.ansiTree) + str + this.ansi('reset')
+              : str
 
     let output = ''
-    for(const childTree of this.#treeRecursion(tree, '', map))
+    for(const childTree of this.#treeRecursion(tree, '', borders, ansi))
     {
       output += this.config.EOL + childTree
     }
@@ -839,7 +865,7 @@ export default class Log
     return output.trim()
   }
 
-  * #treeRecursion(children, prefix, map, hasLast)
+  * #treeRecursion(children, prefix, borders, ansi, hasLast)
   {
     switch(Object.prototype.toString.call(children))
     {
@@ -851,27 +877,27 @@ export default class Log
             child       = children[i],
             isLast      = i === children.length - 1,
             branch      = isLast 
-                        ? map.bottomLeft + map.horizontal
-                        : map.teeLeft    + map.horizontal,
+                        ? borders.bottomLeft + borders.horizontal
+                        : borders.teeLeft    + borders.horizontal,
             nextPrefix  = isLast 
                         ? '   '
-                        : map.vertical + '  '
+                        : borders.vertical + '  '
     
           if(Array.isArray(child))
           {
             if(child.length)
             {
-              yield prefix + branch + map.horizontal + map.teeUp + map.horizontal + ' ' + String(child[0])
-              yield * this.#treeRecursion(child.slice(1), prefix + nextPrefix, map)
+              yield ansi(prefix + branch + borders.horizontal + borders.teeUp + borders.horizontal) + ' ' + String(child[0])
+              yield * this.#treeRecursion(child.slice(1), prefix + nextPrefix, borders, ansi)
             }
           }
           else if('object' === typeof child && null !== child)
           {
-            yield * this.#treeRecursion(child, prefix, map, isLast ? undefined : false)
+            yield * this.#treeRecursion(child, prefix, borders, ansi, isLast ? undefined : false)
           }
           else
           {
-            yield prefix + branch + ' ' + String(child)
+            yield ansi(prefix + branch) + ' ' + String(child)
           }
         }
         break
@@ -885,34 +911,45 @@ export default class Log
           const 
             isLast      = hasLast ?? i === entries.length - 1,
             branch      = isLast 
-                        ? map.bottomLeft + map.horizontal
-                        : map.teeLeft    + map.horizontal,
+                        ? borders.bottomLeft + borders.horizontal
+                        : borders.teeLeft    + borders.horizontal,
             nextPrefix  = isLast 
                         ? '   '
-                        : map.vertical + '  '
+                        : borders.vertical + '  '
   
           if(typeof nested === 'object' 
           && null !== nested)
           {
-            yield prefix + branch + ' ' + String(key)
-            yield * this.#treeRecursion(nested, prefix + nextPrefix, map)
+            yield ansi(prefix + branch) + ' ' + String(key)
+            yield * this.#treeRecursion(nested, prefix + nextPrefix, borders, ansi)
           }
           else
           {
-            yield prefix + branch + ' ' + String(key)
+            yield ansi(prefix + branch) + ' ' + String(key)
                 + '\n' 
-                + prefix + nextPrefix + map.bottomLeft + map.horizontal + ' ' + String(nested)
+                + ansi(prefix + nextPrefix + borders.bottomLeft + borders.horizontal) + ' ' + String(nested)
           }
         }
         break
       }
       default:
       {
-        yield prefix + ' ' + String(children)
+        yield ansi(prefix) + ' ' + String(children)
       }
     }
   }
 
+  /**
+   * Creates a formatted table from the provided input object.
+   * The input should be an object where each key represents a column header
+   * and the values are arrays representing the rows of the table.
+   * 
+   * @param {Object} input - The input object representing the table data.
+   * @returns {string} The formatted table as a string.
+   * 
+   * @throws {TypeError} If the input is not an object or if the values are not arrays.
+   * @throws {RangeError} If the input object has no entries or if the values have different lengths.
+   */
   table(input)
   {
     if('[object Object]' !== Object.prototype.toString.call(input))
@@ -946,10 +983,23 @@ export default class Log
     }
 
     const
-      newLine   = this.config.EOL,
-      borders   = Log.border[String(this.config.border).toLowerCase()] ?? Log.border.light,
+      newLine     = this.config.EOL,
+      borders     = Log.border[String(this.config.border).toLowerCase()] ?? Log.border.light,
+      ansi        = str => this.config.ansi && this.config.ansiTable 
+                  ? this.ansi(this.config.ansiTable) + str + this.ansi('reset') 
+                  : str,
+      topLeft     = ansi(borders.topLeft),
+      topRight    = ansi(borders.topRight),
+      bottomLeft  = ansi(borders.bottomLeft),
+      bottomRight = ansi(borders.bottomRight),
+      teeLeft     = ansi(borders.teeLeft),
+      teeRight    = ansi(borders.teeRight),
+      teeUp       = ansi(borders.teeUp),
+      teeDown     = ansi(borders.teeDown),
+      cross       = ansi(borders.cross),
+      vertical    = ansi(borders.vertical),
       // Standardize values to arrays of spaced strings
-      valueMap  = value => 
+      valueMap    = value => 
       {
         switch(Object.prototype.toString.call(value))
         {
@@ -960,11 +1010,12 @@ export default class Log
           case '[object Boolean]'   : return String(value).trim()
           case '[object Undefined]' : return ''
           case '[object Object]'    : 
-          default                   : return this.#inspect(value, false)
+          default                   : return this.#inspect(value, this.config.ansi)
         }
       },
-      cellMap   = value => valueMap(value).trim().split(newLine).map(value => ` ${value} `),
-      columns   = entries.map(([ header, values ]) => [ header, ...values ]).map(cells => cells.map(cellMap)),
+      cellMap = value => valueMap(value).trim().split(newLine).map(value => ` ${value} `),
+      columns = entries.map(([ header, values ]) => [ header, ...values ]).map(cells => cells.map(cellMap)),
+      aligns  = entries.map(([ , values ]) => values.some(value => isNaN(value) || isNaN(parseFloat(value))) ? 'left' : 'right'),
       // Calculate the table's size dimensions
       cellDimensions =
       {
@@ -974,7 +1025,7 @@ export default class Log
 
         // Calculate the maximum string length of each cell in the table columns
         col: Array(columns.length).fill(0).map((_, c) =>
-          columns[c].reduce((max, cell) => Math.max(max, Math.max(...cell.map(row => row.length))), 0))
+          columns[c].reduce((max, cell) => Math.max(max, Math.max(...cell.map(row => this.stripAnsi(row).length))), 0))
       }
 
     // Compose the columns
@@ -982,15 +1033,14 @@ export default class Log
     {
       const
         empty       = ' '.repeat(cellDimensions.col[c]),
-        horizontal  = borders.horizontal.repeat(cellDimensions.col[c]),
-        vertical    = borders.vertical,
-        top         = c === 0 ? borders.topLeft     : borders.teeUp,
-        left        = c === 0 ? borders.teeLeft     : borders.cross,
-        bottom      = c === 0 ? borders.bottomLeft  : borders.teeDown,
+        horizontal  = ansi(borders.horizontal.repeat(cellDimensions.col[c])),
+        top         = c === 0 ? topLeft     : teeUp,
+        left        = c === 0 ? teeLeft     : cross,
+        bottom      = c === 0 ? bottomLeft  : teeDown,
         tableTop    = top     + horizontal,
         tableMid    = left    + horizontal,
         tableEnd    = bottom  + horizontal,
-        rowsMap     = row => vertical + row.padEnd(cellDimensions.col[c]),
+        rowsMap     = row => vertical + row[aligns[c] === 'right' ? 'padStart' : 'padEnd'](cellDimensions.col[c]),
         cellMap     = (cell, r) => cell.concat(Array(cellDimensions.row[r] - cell.length).fill(empty)).map(rowsMap),
         divider     = cell => [ ...cell, tableMid ]
 
@@ -1005,14 +1055,13 @@ export default class Log
     {
       const
         tableRow  = columns.reduce((tableRow, cells) => tableRow + (cells[row] || ''), ''),
-        startRow  = tableRow[0],
-        rightEnd  = startRow === borders.topLeft
-                    ? borders.topRight + newLine
-                    : startRow === borders.vertical
-                      ? borders.vertical + newLine
-                      : startRow === borders.teeLeft
-                        ? borders.teeRight + newLine
-                        : borders.bottomRight
+        rightEnd  = tableRow.startsWith(topLeft)
+                  ? topRight + newLine
+                  : tableRow.startsWith(vertical)
+                  ? vertical + newLine
+                  : tableRow.startsWith(teeLeft)
+                  ? teeRight + newLine
+                  : bottomRight
 
       table += tableRow + rightEnd
     }

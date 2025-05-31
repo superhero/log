@@ -846,7 +846,7 @@ suite('@superhero/log', () =>
 
     test('Can log a tree structure', () =>
     {
-      log.use({ tree:true }).info`foo${{ bar:'baz' }}qux`
+      log.use({ tree:true }).info`foo\n${{ bar:'baz' }}\nqux`
       assert.equal(
         outstream.chunks[0],
         'foo\n'
@@ -854,6 +854,21 @@ suite('@superhero/log', () =>
       + '   └─ baz\n'
       + 'qux\n',
         'Expected the argument to the template to be logged as a tree structure')
+    })
+
+    test('Can log a tree structure with ANSI formatting', () =>
+    {
+      log.use({ ansi:true, tree:true }).info`foobar:\n${{ foo:'bar', baz:[ 1, 2, 3 ] }}`
+      assert.equal(
+        outstream.chunks[0],
+        'foobar:\n'
+      + '\x1B[2m\x1B[90m├─\x1B[0m foo\n'
+      + '\x1B[2m\x1B[90m│  └─\x1B[0m bar\n'
+      + '\x1B[2m\x1B[90m└─\x1B[0m baz\n'
+      + '\x1B[2m\x1B[90m   ├─\x1B[0m 1\n'
+      + '\x1B[2m\x1B[90m   ├─\x1B[0m 2\n'
+      + '\x1B[2m\x1B[90m   └─\x1B[0m 3\n',
+        'Expected the log message with a tree structure to be with ANSI formatting')
     })
   })
 
@@ -963,6 +978,21 @@ suite('@superhero/log', () =>
         'Expected a simple table structure using double and light lines')
     })
 
+    test('Can format a simple table with ANSI formatting', () =>
+    {
+      const table = log.use({ ansi:true }).table({ 'foo': [ 'bar' ], 
+                                                   'baz': [ 'qux' ] })
+
+      assert.equal(
+        table,
+        '\x1B[2m\x1B[93m┌\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┬\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┐\x1B[0m\n'
+      + '\x1B[2m\x1B[93m│\x1B[0m foo \x1B[2m\x1B[93m│\x1B[0m baz \x1B[2m\x1B[93m│\x1B[0m\n'
+      + '\x1B[2m\x1B[93m├\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┼\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┤\x1B[0m\n'
+      + '\x1B[2m\x1B[93m│\x1B[0m bar \x1B[2m\x1B[93m│\x1B[0m qux \x1B[2m\x1B[93m│\x1B[0m\n'
+      + '\x1B[2m\x1B[93m└\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┴\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┘\x1B[0m', 
+        'Expected a simple table structure with ANSI formatting')
+    })
+
     test('Can format a large table', () =>
     {
       const table = log.table({ 'foo': [ 10,11,12,13,14,15,16,17,18,19 ], 
@@ -974,25 +1004,25 @@ suite('@superhero/log', () =>
         '┌─────┬─────┬─────┬─────┐\n'
       + '│ foo │ bar │ baz │ qux │\n'
       + '├─────┼─────┼─────┼─────┤\n'
-      + '│ 10  │ 20  │ 30  │ 40  │\n'
+      + '│  10 │  20 │  30 │  40 │\n'
       + '├─────┼─────┼─────┼─────┤\n'
-      + '│ 11  │ 21  │ 31  │ 41  │\n'
+      + '│  11 │  21 │  31 │  41 │\n'
       + '├─────┼─────┼─────┼─────┤\n'
-      + '│ 12  │ 22  │ 32  │ 42  │\n'
+      + '│  12 │  22 │  32 │  42 │\n'
       + '├─────┼─────┼─────┼─────┤\n'
-      + '│ 13  │ 23  │ 33  │ 43  │\n'
+      + '│  13 │  23 │  33 │  43 │\n'
       + '├─────┼─────┼─────┼─────┤\n'
-      + '│ 14  │ 24  │ 34  │ 44  │\n'
+      + '│  14 │  24 │  34 │  44 │\n'
       + '├─────┼─────┼─────┼─────┤\n'
-      + '│ 15  │ 25  │ 35  │ 45  │\n'
+      + '│  15 │  25 │  35 │  45 │\n'
       + '├─────┼─────┼─────┼─────┤\n'
-      + '│ 16  │ 26  │ 36  │ 46  │\n'
+      + '│  16 │  26 │  36 │  46 │\n'
       + '├─────┼─────┼─────┼─────┤\n'
-      + '│ 17  │ 27  │ 37  │ 47  │\n'
+      + '│  17 │  27 │  37 │  47 │\n'
       + '├─────┼─────┼─────┼─────┤\n'
-      + '│ 18  │ 28  │ 38  │ 48  │\n'
+      + '│  18 │  28 │  38 │  48 │\n'
       + '├─────┼─────┼─────┼─────┤\n'
-      + '│ 19  │ 29  │ 39  │ 49  │\n'
+      + '│  19 │  29 │  39 │  49 │\n'
       + '└─────┴─────┴─────┴─────┘',
         'Expected a large table structure')
     })
@@ -1035,7 +1065,7 @@ suite('@superhero/log', () =>
 
     test('Can log using enabled table', () =>
     {
-      log.use({ table:true }).info`123${{ foo: [ 'bar' ], baz: [ 'qux' ] }}456`
+      log.use({ table:true }).info`123\n${{ foo: [ 'bar' ], baz: [ 'qux' ] }}\n456`
       assert.equal(
         outstream.chunks[0],
         '123\n'
@@ -1050,7 +1080,7 @@ suite('@superhero/log', () =>
 
     test('Can log a nested table using enabled table', () =>
     {
-      log.use({ table:true }).info`123${{ foo: [ 'bar' ], baz: [ { foo: [ 'bar' ], baz: [ 'qux' ] } ] }}456`
+      log.use({ table:true }).info`123\n${{ foo: [ 'bar' ], baz: [ { foo: [ 'bar' ], baz: [ 'qux' ] } ] }}\n456`
       assert.equal(
         outstream.chunks[0],
         '123\n'

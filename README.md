@@ -9,6 +9,7 @@ A simple logger designed to be a versatile Node.js utility component, offering c
 - **Message formatting**: Template literal support for dynamic log messages.
 - **Global event hooks**: Observe logs globally across multiple instances.
 - **Mute control**: Granular muting for `info`, `warn`, and `fail` logs.
+- **Data structures**: Table or tree data structures can be enabled.
 
 ## Installation
 
@@ -90,8 +91,74 @@ const log = new Log()
 log.circled.info`Look at this` // Ⓛⓞⓞⓚ ⓐⓣ ⓣⓗⓘⓢ
 log.squared.info`Look at that` // 🄻🄾🄾🄺 🄰🅃 🅃🄷🄰🅃
 log.upsideDown.info`Fun stuff` // Ⅎnu sʇnɟɟ
-log.upsideDown.info`ffuts nuF` // ɟɟnʇs unℲ
+log.upsideDown.reverse.info`Fun stuff` // ɟɟnʇs unℲ
 log.smallCaps.info`Enough now` // Eɴᴏᴜɢʜ ɴᴏᴡ
+```
+
+### Table structure
+
+```javascript
+const log  = new Log({ table:true })
+
+// Table data structure
+const data =
+{
+  foo: [ 10,11,12,13,14,15 ],
+  bar: [ 20,21,22,23,24,25 ],
+  baz: [ 30,31,32,33,34,35 ],
+  qux: [ 40,41,42,43,44,45 ],
+}
+
+// Log the table data as part of the log message...
+log.info`Some random data:\n${data}`
+
+// Some random data:
+// ┌─────┬─────┬─────┬─────┐
+// │ foo │ bar │ baz │ qux │
+// ├─────┼─────┼─────┼─────┤
+// │  10 │  20 │  30 │  40 │
+// ├─────┼─────┼─────┼─────┤
+// │  11 │  21 │  31 │  41 │
+// ├─────┼─────┼─────┼─────┤
+// │  12 │  22 │  32 │  42 │
+// ├─────┼─────┼─────┼─────┤
+// │  13 │  23 │  33 │  43 │
+// ├─────┼─────┼─────┼─────┤
+// │  14 │  24 │  34 │  44 │
+// ├─────┼─────┼─────┼─────┤
+// │  15 │  25 │  35 │  45 │
+// └─────┴─────┴─────┴─────┘
+```
+
+### Tree structure
+
+```javascript
+const log  = new Log({ tree:true })
+
+// Tree data structure is very permissive
+const data =
+{
+  foo:
+  [
+    'bar',
+    'baz',
+    {
+      'qux': [ 1,2,3 ]
+    }
+  ]
+}
+
+// Log the tree data as part of the log message...
+log.info`Some random data:\n${data}`
+
+// Some random data:
+// └─ foo
+//    ├─ bar
+//    ├─ baz
+//    └─ qux
+//       ├─ 1
+//       ├─ 2
+//       └─ 3
 ```
 
 ### Observability
@@ -128,27 +195,30 @@ log.fail`Fail message with error: ${new Error()}`
 
 ## Configuration
 
-| Property        | Type    | Default    | Description                                  |
-|-----------------|---------|------------|----------------------------------------------|
-| `label`         | String  | `[LOG]`    | Prefix for all log messages.                 |
-| `divider`       | String  | ` ⇢ `      | Divider between label and message.           |
-| `mute`          | Boolean | `false`    | Mute all log types.                          |
-| `muteInfo`      | Boolean | `false`    | Mute only `info` logs.                       |
-| `muteWarn`      | Boolean | `false`    | Mute only `warn` logs.                       |
-| `muteFail`      | Boolean | `false`    | Mute only `fail` logs.                       |
-| `transform`     | Boolean | `false`    | Transform the text to unicode styled         |
-| `inline`        | Boolean | `false`    | Should the log message append EOL            |
-| `returns`       | Boolean | `false`    | Returns the unformatted message if true      |
-| `tree`          | Boolean | `false`    | Structures arguemnts as a tree structure     |
-| `ansi`          | Boolean | `true`     | Format using using ANSI escpape codes        |
-| `reset`         | Boolean | `true`     | Reset when using ANSI                        |
-| `outstream`     | Stream  | `stdout`   | Output stream                                |
-| `errstream`     | Stream  | `stderr`   | Error stream                                 |
-| `EOL`           | String  | `os`.`EOL` | New line or other end of line character      |
-| `border`        | String  | `light`    | Border type to use when rendering borders    |
-| `ansiLabel`     | String  |            | ANSI escape codes to format the label        |
-| `ansiText`      | String  |            | ANSI escape codes to format the text         |
-| `ansiValue`     | String  |            | ANSI escape codes to format the value        |
+| Property        | Type    | Default    | Description                                            |
+|-----------------|---------|------------|--------------------------------------------------------|
+| `label`         | String  | `[LOG]`    | Prefix for all log messages.                           |
+| `divider`       | String  | ` ⇢ `      | Divider between label and message.                     |
+| `mute`          | Boolean | `false`    | Mute all log types.                                    |
+| `muteInfo`      | Boolean | `false`    | Mute only `info` logs.                                 |
+| `muteWarn`      | Boolean | `false`    | Mute only `warn` logs.                                 |
+| `muteFail`      | Boolean | `false`    | Mute only `fail` logs.                                 |
+| `transform`     | Boolean | `false`    | Transform the text to unicode styled                   |
+| `inline`        | Boolean | `false`    | Should the log message append EOL                      |
+| `returns`       | Boolean | `false`    | Returns the unformatted message if true                |
+| `table`         | Boolean | `false`    | Structures arguemnts as a table structure, if possible |
+| `tree`          | Boolean | `false`    | Structures arguemnts as a tree structure               |
+| `ansi`          | Boolean | `true`     | Format using using ANSI escpape codes                  |
+| `reset`         | Boolean | `true`     | Reset when using ANSI                                  |
+| `outstream`     | Stream  | `stdout`   | Output stream                                          |
+| `errstream`     | Stream  | `stderr`   | Error stream                                           |
+| `EOL`           | String  | `os`.`EOL` | New line, or other end of line (EOL) character         |
+| `border`        | String  | `light`    | Border type to use when rendering borders              |
+| `ansiLabel`     | String  |            | ANSI escape codes to format the label                  |
+| `ansiText`      | String  |            | ANSI escape codes to format the text                   |
+| `ansiValue`     | String  |            | ANSI escape codes to format the value                  |
+| `ansiTable`     | String  |            | ANSI escape codes to format the table borders          |
+| `ansiTree`      | String  |            | ANSI escape codes to format the tree borders           |
 
 ## Tests
 
@@ -161,99 +231,269 @@ npm test
 ### Test Coverage
 
 ```
-▶ @superhero/log
-  ✔ Info (3.132263ms)
-  ✔ Warn (1.026273ms)
-  ✔ Fail (0.856849ms)
-  ✔ Returns an unformatted string of the log message when configured to return (2.044395ms)
+────────────────────────────────── ⋅⋆ Suite ⋆⋅ ─────────────────────────────────
 
-  ▶ Mute
-    ✔ Mute all (1.699592ms)
-    ✔ Mute info (0.793663ms)
-    ✔ Mute warn (0.417128ms)
-    ✔ Mute fail (0.506808ms)
-  ✔ Mute (4.939631ms)
 
-  ▶ Observe
-    ✔ Observe log info (0.630509ms)
-    ✔ Observe log warn (0.293964ms)
-    ✔ Observe log fail (0.245097ms)
-    ✔ Distinguish types in observed log messages (0.691411ms)
-    ✔ Distinguish types in observed global log messages (1.664369ms)
-  ✔ Observe (3.800536ms)
+@superhero/log
+├─ Simple construction of the Log instance
+│  └─ ✔ passed 2.958742ms
+├─ Info
+│  └─ ✔ passed 0.345249ms
+├─ Warn
+│  └─ ✔ passed 0.442836ms
+├─ Fail
+│  └─ ✔ passed 0.874991ms
+├─ Returns an unformatted string of the log message when configured to return
+│  └─ ✔ passed 1.124585ms
+├─ Mute
+│  ├─ Mute all
+│  │  └─ ✔ passed 0.535226ms
+│  ├─ Mute info
+│  │  └─ ✔ passed 0.278769ms
+│  ├─ Mute warn
+│  │  └─ ✔ passed 0.292808ms
+│  ├─ Mute fail
+│  │  └─ ✔ passed 0.391119ms
+│  └─ ✔ suite passed 1.947096ms
+├─ Observe
+│  ├─ Observe log info
+│  │  └─ ✔ passed 0.406538ms
+│  ├─ Observe log warn
+│  │  └─ ✔ passed 0.29576ms
+│  ├─ Observe log fail
+│  │  └─ ✔ passed 0.31581ms
+│  ├─ Distinguish types in observed log messages
+│  │  └─ ✔ passed 0.707904ms
+│  ├─ Distinguish types in observed global log messages
+│  │  └─ ✔ passed 1.410703ms
+│  └─ ✔ suite passed 3.372947ms
+├─ Filter
+│  ├─ Can filter log messages using camelCase
+│  │  └─ ✔ passed 1.62556ms
+│  ├─ Can filter log messages using capitalize
+│  │  └─ ✔ passed 0.73326ms
+│  ├─ Can filter log messages using dashCase
+│  │  └─ ✔ passed 0.48413ms
+│  ├─ Can filter log messages using dotCase
+│  │  └─ ✔ passed 0.318218ms
+│  ├─ Can filter log messages using leet
+│  │  └─ ✔ passed 0.297713ms
+│  ├─ Can filter log messages using lowerCase
+│  │  └─ ✔ passed 0.242082ms
+│  ├─ Can filter log messages using pathCase
+│  │  └─ ✔ passed 0.239779ms
+│  ├─ Can filter log messages using pipeCase
+│  │  └─ ✔ passed 0.243202ms
+│  ├─ Can filter log messages using randomCase
+│  │  └─ ✔ passed 0.593199ms
+│  ├─ Can filter log messages using reverse
+│  │  └─ ✔ passed 0.336114ms
+│  ├─ Can filter log messages using reverseSentences
+│  │  └─ ✔ passed 0.333202ms
+│  ├─ Can filter log messages using reverseWords
+│  │  └─ ✔ passed 0.236699ms
+│  ├─ Can filter log messages using snakeCase
+│  │  └─ ✔ passed 0.272926ms
+│  ├─ Can filter log messages using spaceCase
+│  │  └─ ✔ passed 0.284911ms
+│  ├─ Can filter log messages using tildeCase
+│  │  └─ ✔ passed 0.229497ms
+│  ├─ Can filter log messages using titleCase
+│  │  └─ ✔ passed 0.410656ms
+│  ├─ Can filter log messages using upperCase
+│  │  └─ ✔ passed 0.235252ms
+│  ├─ Can add and remove filters
+│  │  └─ ✔ passed 0.426326ms
+│  └─ ✔ suite passed 8.41819ms
+├─ Transform
+│  ├─ Can transform a string
+│  │  └─ ✔ passed 2.158252ms
+│  ├─ Can transform a log message string
+│  │  └─ ✔ passed 0.542494ms
+│  ├─ Can use circledFilled to transform a log message
+│  │  └─ ✔ passed 0.668016ms
+│  ├─ Can use squared to transform a log message
+│  │  └─ ✔ passed 0.229625ms
+│  ├─ Can use squaredDashed to transform a log message
+│  │  └─ ✔ passed 0.278039ms
+│  ├─ Can use squaredFilled to transform a log message
+│  │  └─ ✔ passed 0.27945ms
+│  ├─ Can use upsideDown to transform a log message
+│  │  └─ ✔ passed 0.345051ms
+│  ├─ Can use smallCaps to transform a log message
+│  │  └─ ✔ passed 0.288567ms
+│  ├─ Can use smallCaps to transform a log message
+│  │  └─ ✔ passed 0.186975ms
+│  ├─ Can use doubleStruck to transform a log message
+│  │  └─ ✔ passed 0.213308ms
+│  ├─ Can use oldEnglish to transform a log message
+│  │  └─ ✔ passed 0.17581ms
+│  ├─ Can use strongOldEnglish to transform a log message
+│  │  └─ ✔ passed 0.165775ms
+│  ├─ Can use script to transform a log message
+│  │  └─ ✔ passed 0.159728ms
+│  ├─ Can use serif to transform a log message
+│  │  └─ ✔ passed 0.266868ms
+│  ├─ Can use strong to transform a log message
+│  │  └─ ✔ passed 0.394423ms
+│  ├─ Can use fullwidth to transform a log message
+│  │  └─ ✔ passed 0.216826ms
+│  ├─ Can use parenthesized to transform a log message
+│  │  └─ ✔ passed 0.188862ms
+│  └─ ✔ suite passed 7.408358ms
+├─ Colors
+│  ├─ Can define colors using the colors method
+│  │  └─ ✔ passed 1.473162ms
+│  ├─ Can define Palette 8-bit ANSI escape codes using RGB color definition
+│  │  └─ ✔ passed 0.396107ms
+│  ├─ Can define Palette 8-bit ANSI escape codes using RGB background color definition
+│  │  └─ ✔ passed 0.30498ms
+│  ├─ Can define Truecolor ANSI escape codes using RGB color definition
+│  │  └─ ✔ passed 0.457131ms
+│  ├─ Can define Truecolor ANSI escape codes using RGB color definition
+│  │  └─ ✔ passed 0.247131ms
+│  ├─ Can define Truecolor ANSI escape codes using RGB background color definition
+│  │  └─ ✔ passed 0.282039ms
+│  ├─ Can define Truecolor ANSI escape codes using HEX color definition
+│  │  └─ ✔ passed 0.374522ms
+│  ├─ Can define Truecolor ANSI escape codes using HEX background color definition
+│  │  └─ ✔ passed 0.252523ms
+│  ├─ Can define Truecolor ANSI escape codes using 6 character HEX color definition
+│  │  └─ ✔ passed 0.197842ms
+│  ├─ Can define Truecolor ANSI escape codes using 3 character HEX color definition
+│  │  └─ ✔ passed 0.359607ms
+│  ├─ Will use the defined ANSI escape code if provided manually
+│  │  └─ ✔ passed 0.28645ms
+│  └─ ✔ suite passed 5.168959ms
+├─ Can set a specific logger config
+│  └─ ✔ passed 0.341542ms
+├─ Kaomoji
+│  ├─ Can use kaomoji
+│  │  └─ ✔ passed 0.443811ms
+│  ├─ Throws on invalid kaomoji
+│  │  └─ ✔ passed 1.051838ms
+│  ├─ Can use the "smile" kaomoji in log messages
+│  │  └─ ✔ passed 0.245573ms
+│  ├─ Can use the "happy" kaomoji in log messages
+│  │  └─ ✔ passed 0.402689ms
+│  ├─ Can use the "good" kaomoji in log messages
+│  │  └─ ✔ passed 0.386914ms
+│  ├─ Can use the "confused" kaomoji in log messages
+│  │  └─ ✔ passed 0.288576ms
+│  ├─ Can use the "idk" kaomoji in log messages
+│  │  └─ ✔ passed 0.294919ms
+│  ├─ Can use the "sad" kaomoji in log messages
+│  │  └─ ✔ passed 0.485167ms
+│  ├─ Can use the "angry" kaomoji in log messages
+│  │  └─ ✔ passed 0.457755ms
+│  ├─ Can use the "bad" kaomoji in log messages
+│  │  └─ ✔ passed 0.370573ms
+│  ├─ Can use the "corrected" kaomoji in log messages
+│  │  └─ ✔ passed 0.43318ms
+│  └─ ✔ suite passed 5.423189ms
+├─ Tree
+│  ├─ Can compose a simple value
+│  │  └─ ✔ passed 1.133463ms
+│  ├─ Can compose a simple array tree structure
+│  │  └─ ✔ passed 0.277029ms
+│  ├─ Can compose a nested array tree structure
+│  │  └─ ✔ passed 0.269407ms
+│  ├─ Can compose a complicated nested array tree structure
+│  │  └─ ✔ passed 0.485155ms
+│  ├─ Can compose a simple object tree structure
+│  │  └─ ✔ passed 0.231248ms
+│  ├─ Can compose a nested object tree structure
+│  │  └─ ✔ passed 0.18638ms
+│  ├─ Can compose a complicated nested object tree structure
+│  │  └─ ✔ passed 1.398719ms
+│  ├─ Can compose a simple mixed array and object tree structure
+│  │  └─ ✔ passed 0.298856ms
+│  ├─ Can compose a simple mixed object and array tree structure
+│  │  └─ ✔ passed 0.172376ms
+│  ├─ Can compose a nested mixed array and object tree structure
+│  │  └─ ✔ passed 0.362961ms
+│  ├─ Can compose a nested mixed object and array tree structure
+│  │  └─ ✔ passed 0.151924ms
+│  ├─ Can compose a complicated mixed array and object tree structure
+│  │  └─ ✔ passed 0.142644ms
+│  ├─ Can compose a complicated mixed object and array tree structure
+│  │  └─ ✔ passed 0.258007ms
+│  ├─ Can log a tree structure
+│  │  └─ ✔ passed 0.648681ms
+│  ├─ Can log a tree structure with ANSI formatting
+│  │  └─ ✔ passed 0.596197ms
+│  └─ ✔ suite passed 7.312372ms
+├─ Table
+│  ├─ Can format a simple table
+│  │  └─ ✔ passed 1.847446ms
+│  ├─ Can format a simple table using heavy lines
+│  │  └─ ✔ passed 0.34847ms
+│  ├─ Can format a simple table using light and heavy lines
+│  │  └─ ✔ passed 0.472895ms
+│  ├─ Can format a simple table using heavy and light lines
+│  │  └─ ✔ passed 0.234213ms
+│  ├─ Can format a simple table using double lines
+│  │  └─ ✔ passed 0.475763ms
+│  ├─ Can format a simple table using light and double lines
+│  │  └─ ✔ passed 0.193419ms
+│  ├─ Can format a simple table using double and light lines
+│  │  └─ ✔ passed 0.1986ms
+│  ├─ Can format a simple table with ANSI formatting
+│  │  └─ ✔ passed 0.240485ms
+│  ├─ Can format a large table
+│  │  └─ ✔ passed 0.30641ms
+│  ├─ Can format a complex table
+│  │  └─ ✔ passed 0.703804ms
+│  ├─ Can log using enabled table
+│  │  └─ ✔ passed 0.276914ms
+│  ├─ Can log a nested table using enabled table
+│  │  └─ ✔ passed 0.449158ms
+│  └─ ✔ suite passed 6.209447ms
+└─ ✔ suite passed 53.328736ms
 
-  ▶ Transform
-    ✔ Can transform a string (0.431963ms)
-    ✔ Can transform a log message string (0.458351ms)
-  ✔ Transform (1.073402ms)
 
-  ▶ Colors
-    ✔ Can define colors using the colors method (0.951309ms)
-    ✔ Can define Palette 8-bit ANSI escape codes using RGB color definition (0.243988ms)
-    ✔ Can define Palette 8-bit ANSI escape codes using RGB background color definition (0.241082ms)
-    ✔ Can define Truecolor ANSI escape codes using RGB color definition (0.331344ms)
-    ✔ Can define Truecolor ANSI escape codes using RGB color definition (0.282975ms)
-    ✔ Can define Truecolor ANSI escape codes using RGB background color definition (0.320038ms)
-    ✔ Can define Truecolor ANSI escape codes using HEX color definition (0.509677ms)
-    ✔ Can define Truecolor ANSI escape codes using HEX background color definition (0.463788ms)
-    ✔ Can define Truecolor ANSI escape codes using 6 character HEX color definition (0.347275ms)
-    ✔ Can define Truecolor ANSI escape codes using 3 character HEX color definition (0.499435ms)
-    ✔ Will use the defined ANSI escape code if provided manually (0.372044ms)
-  ✔ Colors (5.143552ms)
+─────────────────────────────────── ⋅⋆ Coverage ⋆⋅ ───────────────────────────────────
 
-  ✔ Can set a specific logger config (0.398921ms)
 
-  ▶ Kaomoji
-    ✔ Can use kaomoji (0.704555ms)
-    ✔ Throws on invalid kaomoji (1.443774ms)
-    ✔ Can use the "smile" kaomoji in log messages (0.411416ms)
-    ✔ Can use the "happy" kaomoji in log messages (0.356117ms)
-    ✔ Can use the "good" kaomoji in log messages (0.234225ms)
-    ✔ Can use the "confused" kaomoji in log messages (0.192324ms)
-    ✔ Can use the "idk" kaomoji in log messages (0.184388ms)
-    ✔ Can use the "sad" kaomoji in log messages (0.190651ms)
-    ✔ Can use the "angry" kaomoji in log messages (0.182483ms)
-    ✔ Can use the "bad" kaomoji in log messages (0.255128ms)
-    ✔ Can use the "corrected" kaomoji in log messages (0.197446ms)
-  ✔ Kaomoji (4.783928ms)
+Files                                                  Coverage   Branches   Functions
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+index.js                                                    95%        89%        100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+index.test.js                                              100%       100%        100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/ansi.js                                                100%       100%        100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/border.js                                              100%       100%        100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/filter.js                                              100%        96%         95%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/hex2rgb.js                                              76%        71%        100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/kaomoji.js                                             100%       100%        100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/symbol.js                                              100%       100%        100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/transform.js                                           100%       100%        100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Total                                                       98%        93%         99%
 
-  ▶ Tree
-    ✔ Can compose a simple value (0.896528ms)
-    ✔ Can compose a simple array tree structure (0.288481ms)
-    ✔ Can compose a nested array tree structure (0.218647ms)
-    ✔ Can compose a complicated nested array tree structure (0.328716ms)
-    ✔ Can compose a simple object tree structure (0.168396ms)
-    ✔ Can compose a nested object tree structure (0.185651ms)
-    ✔ Can compose a complicated nested object tree structure (1.603565ms)
-    ✔ Can compose a simple mixed array and object tree structure (0.40033ms)
-    ✔ Can compose a simple mixed object and array tree structure (0.24216ms)
-    ✔ Can compose a nested mixed array and object tree structure (0.351753ms)
-    ✔ Can compose a nested mixed object and array tree structure (0.203328ms)
-    ✔ Can compose a complicated mixed array and object tree structure (0.169818ms)
-    ✔ Can compose a complicated mixed object and array tree structure (0.163571ms)
-    ✔ Can log a tree structure (0.3019ms)
-  ✔ Tree (6.054849ms)
-✔ @superhero/log (35.767101ms)
 
-tests 52
-suites 7
-pass 48
+──────────────────────────────────── ⋅⋆ Summary ⋆⋅ ───────────────────────────────────
 
------------------------------------------------------------------
-file             | line % | branch % | funcs % | uncovered lines
------------------------------------------------------------------
-index.js         | 100.00 |    90.48 |  100.00 | 
-index.test.js    | 100.00 |   100.00 |  100.00 | 
-lib              |        |          |         | 
- ansi.js         | 100.00 |   100.00 |  100.00 | 
- border.js       | 100.00 |   100.00 |  100.00 | 
- hex2rgb.js      |  76.92 |    71.43 |  100.00 | 14-17 34-38
- kaomoji.js      | 100.00 |   100.00 |  100.00 | 
- symbol.js       | 100.00 |   100.00 |  100.00 | 
- transform.js    | 100.00 |   100.00 |  100.00 | 
------------------------------------------------------------------
-all files        |  99.43 |    93.49 |  100.00 | 
------------------------------------------------------------------
+
+Suites                                                                               9
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Tests                                                                               99
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Passed                                                                              99
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Failed                                                                               0
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Cancelled                                                                            0
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Skipped                                                                              0
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Todo                                                                                 0
 ```
 
 ## License

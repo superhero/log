@@ -1,6 +1,6 @@
 {
   "name": "@superhero/log",
-  "version": "4.1.5",
+  "version": "4.1.6",
   "description": "A simple logger - intended to make it easy to configure, control and extend application log behaviour.",
   "keywords": [
     "logger",
@@ -15,7 +15,10 @@
     "./*": "./lib/*.js"
   },
   "scripts": {
-    "test": "node --trace-warnings --test --experimental-test-coverage"
+    "test": "node --test --test-reporter=@superhero/audit/reporter --experimental-test-coverage"
+  },
+  "devDependencies": {
+    "@superhero/audit": "^4.0.3"
   },
   "author": {
     "name": "Erik Landvall",
