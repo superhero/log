@@ -460,7 +460,8 @@ suite('@superhero/log', () =>
       const tree = log.tree([ 'foo', 'bar' ])
       assert.equal(
         tree, 
-        '├─ foo\n└─ bar', 
+        '├─ foo\n'
+      + '└─ bar', 
         'Expected a simple tree structure')
     })
 
@@ -469,7 +470,9 @@ suite('@superhero/log', () =>
       const tree = log.tree([ 'foo', [ 'bar', 'baz' ] ])
       assert.equal(
         tree, 
-        '├─ foo\n└──┬─ bar\n   └─ baz', 
+        '├─ foo\n'
+      + '└──┬─ bar\n'
+      + '   └─ baz', 
         'Expected a nested tree structure')
     })
 
@@ -478,7 +481,17 @@ suite('@superhero/log', () =>
       const tree = log.tree([ 'foo', [ 'bar', 'baz' ], 'qux', [ 1, 2, 3 ], [ 3, 4, 5, 6] ])
       assert.equal(
         tree, 
-        '├─ foo\n├──┬─ bar\n│  └─ baz\n├─ qux\n├──┬─ 1\n│  ├─ 2\n│  └─ 3\n└──┬─ 3\n   ├─ 4\n   ├─ 5\n   └─ 6', 
+        '├─ foo\n'
+      + '├──┬─ bar\n'
+      + '│  └─ baz\n'
+      + '├─ qux\n'
+      + '├──┬─ 1\n'
+      + '│  ├─ 2\n'
+      + '│  └─ 3\n'
+      + '└──┬─ 3\n'
+      + '   ├─ 4\n'
+      + '   ├─ 5\n'
+      + '   └─ 6', 
         'Expected a complicated nested tree structure')
     })
 
@@ -487,7 +500,8 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: 'bar' })
       assert.equal(
         tree, 
-        '└─ foo\n   └─ bar', 
+        '└─ foo\n'
+      + '   └─ bar', 
         'Expected a simple tree structure')
     })
 
@@ -496,7 +510,9 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: { bar: 'baz' } })
       assert.equal(
         tree, 
-        '└─ foo\n   └─ bar\n      └─ baz', 
+        '└─ foo\n'
+      + '   └─ bar\n'
+      + '      └─ baz', 
         'Expected a simple tree structure')
     })
 
@@ -505,7 +521,25 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: { bar: 'baz' }, qux: '...', 1: { a:3, b:4, c:5 }, 2: { d:6, e:7, f:8 } })
       assert.equal(
         tree, 
-        '├─ 1\n│  ├─ a\n│  │  └─ 3\n│  ├─ b\n│  │  └─ 4\n│  └─ c\n│     └─ 5\n├─ 2\n│  ├─ d\n│  │  └─ 6\n│  ├─ e\n│  │  └─ 7\n│  └─ f\n│     └─ 8\n├─ foo\n│  └─ bar\n│     └─ baz\n└─ qux\n   └─ ...', 
+        '├─ 1\n'
+      + '│  ├─ a\n'
+      + '│  │  └─ 3\n'
+      + '│  ├─ b\n'
+      + '│  │  └─ 4\n'
+      + '│  └─ c\n'
+      + '│     └─ 5\n'
+      + '├─ 2\n'
+      + '│  ├─ d\n'
+      + '│  │  └─ 6\n'
+      + '│  ├─ e\n'
+      + '│  │  └─ 7\n'
+      + '│  └─ f\n'
+      + '│     └─ 8\n'
+      + '├─ foo\n'
+      + '│  └─ bar\n'
+      + '│     └─ baz\n'
+      + '└─ qux\n'
+      + '   └─ ...', 
         'Expected a complicated nested tree structure')
     })
 
@@ -514,7 +548,9 @@ suite('@superhero/log', () =>
       const tree = log.tree([ 'foo', { bar: 'baz' } ])
       assert.equal(
         tree, 
-        '├─ foo\n└─ bar\n   └─ baz', 
+        '├─ foo\n'
+      + '└─ bar\n'
+      + '   └─ baz', 
         'Expected a mixed array and object tree structure')
     })
 
@@ -523,7 +559,9 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: [ 'bar', 'baz' ] })
       assert.equal(
         tree, 
-        '└─ foo\n   ├─ bar\n   └─ baz', 
+        '└─ foo\n'
+      + '   ├─ bar\n'
+      + '   └─ baz', 
         'Expected a mixed object and array tree structure')
     })
 
@@ -532,7 +570,10 @@ suite('@superhero/log', () =>
       const tree = log.tree([ 'foo', { bar: [ 'baz', 'qux' ] } ])
       assert.equal(
         tree, 
-        '├─ foo\n└─ bar\n   ├─ baz\n   └─ qux', 
+        '├─ foo\n'
+      + '└─ bar\n'
+      + '   ├─ baz\n'
+      + '   └─ qux', 
         'Expected a mixed array and object tree structure')
     })
 
@@ -541,7 +582,10 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: [ 'bar', { baz: 'qux' } ] })
       assert.equal(
         tree, 
-        '└─ foo\n   ├─ bar\n   └─ baz\n      └─ qux', 
+        '└─ foo\n'
+      + '   ├─ bar\n'
+      + '   └─ baz\n'
+      + '      └─ qux', 
         'Expected a mixed object and array tree structure')
     })
 
@@ -550,7 +594,14 @@ suite('@superhero/log', () =>
       const tree = log.tree([ 'foo', { bar: [ 'baz', 'qux' ], n: [ 1, 2, 3] } ])
       assert.equal(
         tree, 
-        '├─ foo\n├─ bar\n│  ├─ baz\n│  └─ qux\n└─ n\n   ├─ 1\n   ├─ 2\n   └─ 3', 
+        '├─ foo\n'
+      + '├─ bar\n'
+      + '│  ├─ baz\n'
+      + '│  └─ qux\n'
+      + '└─ n\n'
+      + '   ├─ 1\n'
+      + '   ├─ 2\n'
+      + '   └─ 3', 
         'Expected a complicated mixed array and object tree structure')
     })
 
@@ -559,7 +610,17 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: [ { bar: 'baz' }, { baz: 'qux' }, { qux: '...' } ], qux: [ 1, 2, 3 ] })
       assert.equal(
         tree, 
-        '├─ foo\n│  ├─ bar\n│  │  └─ baz\n│  ├─ baz\n│  │  └─ qux\n│  └─ qux\n│     └─ ...\n└─ qux\n   ├─ 1\n   ├─ 2\n   └─ 3', 
+        '├─ foo\n'
+      + '│  ├─ bar\n'
+      + '│  │  └─ baz\n'
+      + '│  ├─ baz\n'
+      + '│  │  └─ qux\n'
+      + '│  └─ qux\n'
+      + '│     └─ ...\n'
+      + '└─ qux\n'
+      + '   ├─ 1\n'
+      + '   ├─ 2\n'
+      + '   └─ 3', 
         'Expected a complicated mixed object and array tree structure')
     })
 
@@ -570,6 +631,217 @@ suite('@superhero/log', () =>
         outstream.chunks[0].trim(),
         'foo\n└─ bar\n   └─ baz\nqux', 
         'Expected the argument to the template to be logged as a tree structure')
+    })
+  })
+
+  suite('Table', () =>
+  {
+    test('Can format a simple table', () =>
+    {
+      const table = log.table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table, 
+        '┌─────┬─────┐\n'
+      + '│ foo │ baz │\n'
+      + '├─────┼─────┤\n'
+      + '│ bar │ qux │\n'
+      + '└─────┴─────┘', 
+        'Expected a simple table structure')
+    })
+
+    test('Can format a simple table using heavy lines', () =>
+    {
+      const table = log.use({ border:'heavy' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '┏━━━━━┳━━━━━┓\n'
+      + '┃ foo ┃ baz ┃\n'
+      + '┣━━━━━╋━━━━━┫\n'
+      + '┃ bar ┃ qux ┃\n'
+      + '┗━━━━━┻━━━━━┛',
+        'Expected a simple table structure using heavy lines')
+    })
+
+    test('Can format a simple table using light and heavy lines', () =>
+    {
+      const table = log.use({ border:'light-heavy' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '┍━━━━━┯━━━━━┑\n'
+      + '│ foo │ baz │\n'
+      + '┝━━━━━┿━━━━━┥\n'
+      + '│ bar │ qux │\n'
+      + '┕━━━━━┷━━━━━┙',
+        'Expected a simple table structure using light and heavy lines')
+    })
+
+    test('Can format a simple table using heavy and light lines', () =>
+    {
+      const table = log.use({ border:'heavy-light' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '┎─────┰─────┒\n'
+      + '┃ foo ┃ baz ┃\n'
+      + '┠─────╂─────┨\n'
+      + '┃ bar ┃ qux ┃\n'
+      + '┖─────┸─────┚',
+        'Expected a simple table structure using heavy and light lines')
+    })
+
+    test('Can format a simple table using double lines', () =>
+    {
+      const table = log.use({ border:'double' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '╔═════╦═════╗\n'
+      + '║ foo ║ baz ║\n'
+      + '╠═════╬═════╣\n'
+      + '║ bar ║ qux ║\n'
+      + '╚═════╩═════╝',
+        'Expected a simple table structure using double lines')
+    })
+
+    test('Can format a simple table using light and double lines', () =>
+    {
+      const table = log.use({ border:'light-double' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '╒═════╤═════╕\n'
+      + '│ foo │ baz │\n'
+      + '╞═════╪═════╡\n'
+      + '│ bar │ qux │\n'
+      + '╘═════╧═════╛',
+        'Expected a simple table structure using light and double lines')
+    })
+
+    test('Can format a simple table using double and light lines', () =>
+    {
+      const table = log.use({ border:'double-light' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '╓─────╥─────╖\n'
+      + '║ foo ║ baz ║\n'
+      + '╟─────╫─────╢\n'
+      + '║ bar ║ qux ║\n'
+      + '╙─────╨─────╜',
+        'Expected a simple table structure using double and light lines')
+    })
+
+    test('Can format a large table', () =>
+    {
+      const table = log.table({ 'foo': [ 10,11,12,13,14,15,16,17,18,19 ], 
+                                'bar': [ 20,21,22,23,24,25,26,27,28,29 ], 
+                                'baz': [ 30,31,32,33,34,35,36,37,38,39 ], 
+                                'qux': [ 40,41,42,43,44,45,46,47,48,49 ] })
+      assert.equal(
+        table,
+        '┌─────┬─────┬─────┬─────┐\n'
+      + '│ foo │ bar │ baz │ qux │\n'
+      + '├─────┼─────┼─────┼─────┤\n'
+      + '│ 10  │ 20  │ 30  │ 40  │\n'
+      + '├─────┼─────┼─────┼─────┤\n'
+      + '│ 11  │ 21  │ 31  │ 41  │\n'
+      + '├─────┼─────┼─────┼─────┤\n'
+      + '│ 12  │ 22  │ 32  │ 42  │\n'
+      + '├─────┼─────┼─────┼─────┤\n'
+      + '│ 13  │ 23  │ 33  │ 43  │\n'
+      + '├─────┼─────┼─────┼─────┤\n'
+      + '│ 14  │ 24  │ 34  │ 44  │\n'
+      + '├─────┼─────┼─────┼─────┤\n'
+      + '│ 15  │ 25  │ 35  │ 45  │\n'
+      + '├─────┼─────┼─────┼─────┤\n'
+      + '│ 16  │ 26  │ 36  │ 46  │\n'
+      + '├─────┼─────┼─────┼─────┤\n'
+      + '│ 17  │ 27  │ 37  │ 47  │\n'
+      + '├─────┼─────┼─────┼─────┤\n'
+      + '│ 18  │ 28  │ 38  │ 48  │\n'
+      + '├─────┼─────┼─────┼─────┤\n'
+      + '│ 19  │ 29  │ 39  │ 49  │\n'
+      + '└─────┴─────┴─────┴─────┘',
+        'Expected a large table structure')
+    })
+
+    test('Can format a complex table', () =>
+    {
+      const table = log.table({ 'foobar': [ 'foo\nbar', 1, 2.3, true, false, null, undefined, [ 'FOO', 'BAR' ], { 'baz':'qux' }, Object.create(null) ], 
+                                'bar': Array(10).fill(false), 
+                                'baz': Array(10).fill(null), 
+                                'qux': Array(10).fill(undefined) })
+      assert.equal(
+        table,
+        '┌─────────────────────────────┬───────┬──────┬─────┐\n'
+      + '│ foobar                      │ bar   │ baz  │ qux │\n'
+      + '├─────────────────────────────┼───────┼──────┼─────┤\n'
+      + '│ foo                         │ false │ null │     │\n'
+      + '│ bar                         │       │      │     │\n'
+      + '├─────────────────────────────┼───────┼──────┼─────┤\n'
+      + '│ 1                           │ false │ null │     │\n'
+      + '├─────────────────────────────┼───────┼──────┼─────┤\n'
+      + '│ 2.3                         │ false │ null │     │\n'
+      + '├─────────────────────────────┼───────┼──────┼─────┤\n'
+      + '│ true                        │ false │ null │     │\n'
+      + '├─────────────────────────────┼───────┼──────┼─────┤\n'
+      + '│ false                       │ false │ null │     │\n'
+      + '├─────────────────────────────┼───────┼──────┼─────┤\n'
+      + '│ null                        │ false │ null │     │\n'
+      + '├─────────────────────────────┼───────┼──────┼─────┤\n'
+      + '│                             │ false │ null │     │\n'
+      + '├─────────────────────────────┼───────┼──────┼─────┤\n'
+      + '│ FOO                         │ false │ null │     │\n'
+      + '│ BAR                         │       │      │     │\n'
+      + '├─────────────────────────────┼───────┼──────┼─────┤\n'
+      + "│ { baz: 'qux' }              │ false │ null │     │\n"
+      + '├─────────────────────────────┼───────┼──────┼─────┤\n'
+      + '│ [Object: null prototype] {} │ false │ null │     │\n'
+      + '└─────────────────────────────┴───────┴──────┴─────┘', 
+        'Expected a complex table structure')
+    })
+
+    test('Can log using enabled table', () =>
+    {
+      log.use({ table:true }).info`123${{ foo: [ 'bar' ], baz: [ 'qux' ] }}456`
+      assert.equal(
+        outstream.chunks[0].trim(),
+        '123\n'
+      + '┌─────┬─────┐\n'
+      + '│ foo │ baz │\n'
+      + '├─────┼─────┤\n'
+      + '│ bar │ qux │\n'
+      + '└─────┴─────┘\n'
+      + '456', 
+        'Expected the argument to the template to be logged as a table structure')
+    })
+
+    test('Can log a nested table using enabled table', () =>
+    {
+      log.use({ table:true }).info`123${{ foo: [ 'bar' ], baz: [ { foo: [ 'bar' ], baz: [ 'qux' ] } ] }}456`
+      assert.equal(
+        outstream.chunks[0].trim(),
+        '123\n'
+      + '┌─────┬───────────────┐\n'
+      + '│ foo │ baz           │\n'
+      + '├─────┼───────────────┤\n'
+      + '│ bar │ ┌─────┬─────┐ │\n'
+      + '│     │ │ foo │ baz │ │\n'
+      + '│     │ ├─────┼─────┤ │\n'
+      + '│     │ │ bar │ qux │ │\n'
+      + '│     │ └─────┴─────┘ │\n'
+      + '└─────┴───────────────┘\n'
+      + '456',
+        'Expected the argument to the template to be logged as a table structure')
     })
   })
 })

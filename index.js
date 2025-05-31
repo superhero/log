@@ -46,6 +46,7 @@ export default class Log
     muteFail  : false,
     returns   : false,
     tree      : false,
+    table     : false,
     ansi      : true,
     reset     : true,
     outstream : process.stdout, 
@@ -307,17 +308,32 @@ export default class Log
 
   #inspect(arg, ansi)
   {
-    if('object' === typeof arg && null !== arg && this.config.tree)
+    if(this.config.tree
+    && 'object' === typeof arg 
+    && null !== arg)
     {
       return '\n' + this.tree(arg) + '\n'
     }
-    else
+
+    if(this.config.table
+    && 'object' === typeof arg
+    && null !== arg)
     {
-      return 'object' === typeof arg
-      ? util.inspect(arg, { colors: this.config.ansi && ansi })
-      : (ansi && this.config.ansi && this.config.ansiValue
-        ? this.ansi(this.config.ansiValue) : '') + arg
+      try
+      {
+        return '\n' + this.table(arg) + '\n'
+      }
+      catch(reason)
+      {
+        // ... ignore the error, and fallback to default inspection
+      }
     }
+
+    // default inspection 
+    return 'object' === typeof arg
+    ? util.inspect(arg, { colors: this.config.ansi && ansi })
+    : (ansi && this.config.ansi && this.config.ansiValue
+      ? this.ansi(this.config.ansiValue) : '') + arg
   }
 
   #write(stream, str)
@@ -599,7 +615,7 @@ export default class Log
     {
       output += this.config.EOL + childTree
     }
-    
+
     return output.trim()
   }
 
@@ -675,5 +691,114 @@ export default class Log
         yield prefix + ' ' + String(children)
       }
     }
+  }
+
+  table(input)
+  {
+    if('[object Object]' !== Object.prototype.toString.call(input))
+    {
+      const error = new TypeError(`The provided input table must be an [object Object]`)
+      error.code  = 'E_LOG_TABLE_INVALID'
+      throw error
+    }
+
+    const entries = Object.entries(input)
+
+    if(entries.length < 1)
+    {
+      const error = new RangeError(`The provided input table must have at least one entry`)
+      error.code  = 'E_LOG_TABLE_INVALID'
+      throw error
+    }
+
+    if(entries.some(([ , cells ]) => false === Array.isArray(cells)))
+    {
+      const error = new TypeError(`The provided input table values must be an array`)
+      error.code  = 'E_LOG_TABLE_INVALID'
+      throw error
+    }
+
+    if(entries.some(([ , cells ]) => cells.length !== entries[0][1].length))
+    {
+      const error = new RangeError(`The provided input table values must have the same amount of items`)
+      error.code  = 'E_LOG_TABLE_INVALID'
+      throw error
+    }
+
+    const
+      newLine   = this.config.EOL,
+      borders   = Log.border[String(this.config.border).toLowerCase()] ?? Log.border.light,
+      // Standardize values to arrays of spaced strings
+      valueMap  = value => 
+      {
+        switch(Object.prototype.toString.call(value))
+        {
+          case '[object Array]'     : return value.map(valueMap).join(newLine)
+          case '[object String]'    :
+          case '[object Number]'    :
+          case '[object Null]'      : 
+          case '[object Boolean]'   : return String(value).trim()
+          case '[object Undefined]' : return ''
+          case '[object Object]'    : 
+          default                   : return this.#inspect(value, false)
+        }
+      },
+      cellMap   = value => valueMap(value).trim().split(newLine).map(value => ` ${value} `),
+      columns   = entries.map(([ header, values ]) => [ header, ...values ]).map(cells => cells.map(cellMap)),
+      // Calculate the table's size dimensions
+      cellDimensions =
+      {
+        // Calculate the maximum number of rows in each cell of the table rows
+        row: Array(Math.max(...columns.map(cells => cells.length))).fill(0).map((_, r) =>
+          Math.max(...columns.map(cells => cells[r].length))),
+
+        // Calculate the maximum string length of each cell in the table columns
+        col: Array(columns.length).fill(0).map((_, c) =>
+          columns[c].reduce((max, cell) => Math.max(max, Math.max(...cell.map(row => row.length))), 0))
+      }
+
+    // Compose the columns
+    for(let c = 0; c < columns.length; c++)
+    {
+      const
+        empty       = ' '.repeat(cellDimensions.col[c]),
+        horizontal  = borders.horizontal.repeat(cellDimensions.col[c]),
+        vertical    = borders.vertical,
+        top         = c === 0 ? borders.topLeft     : borders.teeUp,
+        left        = c === 0 ? borders.teeLeft     : borders.cross,
+        bottom      = c === 0 ? borders.bottomLeft  : borders.teeDown,
+        tableTop    = top     + horizontal,
+        tableMid    = left    + horizontal,
+        tableEnd    = bottom  + horizontal,
+        rowsMap     = row => vertical + row.padEnd(cellDimensions.col[c]),
+        cellMap     = (cell, r) => cell.concat(Array(cellDimensions.row[r] - cell.length).fill(empty)).map(rowsMap),
+        divider     = cell => [ ...cell, tableMid ]
+
+      columns[c] = columns[c].map(cellMap).flatMap(divider)
+      columns[c].unshift(tableTop)
+      columns[c][columns[c].length - 1] = tableEnd
+    }
+
+    // Compose the table
+    let table = ''
+    for(let row = 0, max = cellDimensions.row.reduce((a, b) => a + b, cellDimensions.row.length) + 1; row < max; row++)
+    {
+      const
+        tableRow  = columns.reduce((tableRow, cells) => tableRow + (cells[row] || ''), ''),
+        startRow  = tableRow[0],
+        rightEnd  = startRow === borders.topLeft
+                    ? borders.topRight + newLine
+                    : startRow === borders.vertical
+                      ? borders.vertical + newLine
+                      : startRow === borders.teeLeft
+                        ? borders.teeRight + newLine
+                        : borders.bottomRight
+
+      table += tableRow + rightEnd
+    }
+
+    console.log(table)
+
+    return table
   }
 }
