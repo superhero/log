@@ -291,11 +291,113 @@ suite('@superhero/log', () =>
 
       log.info`foobar`
       assert.strictEqual(outstream.chunks[0]?.trim(), 'foobar', 'Expected no transformed message')
-  
-      log.config.transform = true
-  
-      log.info`foobar`
+
+      log.circled.info`foobar`
       assert.strictEqual(outstream.chunks[1]?.trim(), 'ⓕⓞⓞⓑⓐⓡ', 'Expected a transformed message')
+
+      log.config.transform = true
+
+      log.info`foobar`
+      assert.strictEqual(outstream.chunks[2]?.trim(), 'ⓕⓞⓞⓑⓐⓡ', 'Expected a transformed message')
+    })
+
+    test('Can use circledFilled to transform a log message', () =>
+    {
+      log.circledFilled.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), '🅕🅞🅞 🅑🅐🅡 🅑🅐🅩 🅠 🅤 🅧 123 4 5 6', 'Expected a circledFilled transformed message')
+
+      log.filledCircles.info`Foo BAR baz q u x 123 4 5 6`
+      assert.ok(outstream.chunks[0] === outstream.chunks[1], 'Expected the circledFilled and filledCircles transformations to be the same')
+    })
+
+    test('Can use squared to transform a log message', () =>
+    {
+      log.squared.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), '🄵🄾🄾 🄱🄰🅁 🄱🄰🅉 🅀 🅄 🅇 123 4 5 6', 'Expected a squared transformed message')
+    })
+
+    test('Can use squaredDashed to transform a log message', () =>
+    {
+      log.squaredDashed.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), '🇫🇴🇴 🇧🇦🇷 🇧🇦🇿 🇶 🇺 🇽 123 4 5 6', 'Expected a squaredDashed transformed message')
+
+      log.dashedSquares.info`Foo BAR baz q u x 123 4 5 6`
+      assert.ok(outstream.chunks[0] === outstream.chunks[1], 'Expected the squaredDashed and dashedSquares transformations to be the same')
+    })
+
+    test('Can use squaredFilled to transform a log message', () =>
+    {
+      log.squaredFilled.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), '🅵🅾🅾 🅱🅰🆁 🅱🅰🆉 🆀 🆄 🆇 123 4 5 6', 'Expected a squaredFilled transformed message')
+
+      log.filledSquares.info`Foo BAR baz q u x 123 4 5 6`
+      assert.ok(outstream.chunks[0] === outstream.chunks[1], 'Expected the squaredFilled and filledSquares transformations to be the same')
+    })
+
+    test('Can use upsideDown to transform a log message', () =>
+    {
+      log.upsideDown.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), 'Ⅎoo ꓭⱯꓤ qɐz b n x ƖᄅƐ ㄣ ϛ 9', 'Expected an upsideDown transformed message')
+    })
+
+    test('Can use smallCaps to transform a log message', () =>
+    {
+      log.smallCaps.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), 'Fᴏᴏ BAR ʙᴀᴢ ǫ ᴜ x 123 4 5 6', 'Expected a smallCaps transformed message')
+    })
+
+    test('Can use smallCaps to transform a log message', () =>
+    {
+      log.smallCaps.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), 'Fᴏᴏ BAR ʙᴀᴢ ǫ ᴜ x 123 4 5 6', 'Expected a smallCaps transformed message')
+    })
+
+    test('Can use doubleStruck to transform a log message', () =>
+    {
+      log.doubleStruck.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), '𝔽𝕠𝕠 𝔹𝔸ℝ 𝕓𝕒𝕫 𝕢 𝕦 𝕩 𝟙𝟚𝟛 𝟜 𝟝 𝟞', 'Expected a doubleStruck transformed message')
+    })
+
+    test('Can use oldEnglish to transform a log message', () =>
+    {
+      log.oldEnglish.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), '𝔉𝔬𝔬 𝔅𝔄ℜ 𝔟𝔞𝔷 𝔮 𝔲 𝔵 123 4 5 6', 'Expected an oldEnglish transformed message')
+    })
+
+    test('Can use strongOldEnglish to transform a log message', () =>
+    {
+      log.strongOldEnglish.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), '𝕱𝖔𝖔 𝕭𝕬𝕽 𝖇𝖆𝖟 𝖖 𝖚 𝖝 123 4 5 6', 'Expected an oldEnglish transformed message')
+    })
+
+    test('Can use script to transform a log message', () =>
+    {
+      log.script.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), '𝓕𝓸𝓸 𝓑𝓐𝓡 𝓫𝓪𝔃 𝓺 𝓾 𝔁 123 4 5 6', 'Expected a script transformed message')
+    })
+
+    test('Can use serif to transform a log message', () =>
+    {
+      log.serif.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), '𝙵𝚘𝚘 𝙱𝙰𝚁 𝚋𝚊𝚣 𝚚 𝚞 𝚡 𝟷𝟸𝟹 𝟺 𝟻 𝟼', 'Expected a serif transformed message')
+    })
+
+    test('Can use strong to transform a log message', () =>
+    {
+      log.strong.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), '𝗙𝗼𝗼 𝗕𝗔𝗥 𝗯𝗮𝘇 𝗾 𝘂 𝘅 𝟭𝟮𝟯 𝟰 𝟱 𝟲', 'Expected a strong transformed message')
+    })
+
+    test('Can use fullwidth to transform a log message', () =>
+    {
+      log.fullwidth.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), 'Ｆｏｏ ＢＡＲ ｂａｚ ｑ ｕ ｘ １２３ ４ ５ ６', 'Expected a fullwidth transformed message')
+    })
+
+    test('Can use parenthesized to transform a log message', () =>
+    {
+      log.parenthesized.info`Foo BAR baz q u x 123 4 5 6`
+      assert.strictEqual(outstream.chunks[0].trim(), 'F⒪⒪ BAR ⒝⒜⒵ ⒬ ⒰ ⒳ ⑴⑵⑶ ⑷ ⑸ ⑹', 'Expected a parenthesized transformed message')
     })
   })
 
@@ -380,7 +482,7 @@ suite('@superhero/log', () =>
     test('Can use kaomoji', () =>
     {
       log.kaomoji('smile').info`kaomoji`
-      assert.ok(outstream.chunks[0].length > 7, 'Expected the kaomoji to be logged')
+      assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
     })
 
     test('Throws on invalid kaomoji', () =>
@@ -392,55 +494,55 @@ suite('@superhero/log', () =>
     test('Can use the "smile" kaomoji in log messages', () =>
     {
       log.smile.info`kaomoji`
-      assert.ok(outstream.chunks[0].length > 7, 'Expected the kaomoji to be logged')
+      assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
     })
 
     test('Can use the "happy" kaomoji in log messages', () =>
     {
       log.happy.info`kaomoji`
-      assert.ok(outstream.chunks[0].length > 7, 'Expected the kaomoji to be logged')
+      assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
     })
 
     test('Can use the "good" kaomoji in log messages', () =>
     {
       log.good.info`kaomoji`
-      assert.ok(outstream.chunks[0].length > 7, 'Expected the kaomoji to be logged')
+      assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
     })
 
     test('Can use the "confused" kaomoji in log messages', () =>
     {
       log.confused.info`kaomoji`
-      assert.ok(outstream.chunks[0].length > 7, 'Expected the kaomoji to be logged')
+      assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
     })
 
     test('Can use the "idk" kaomoji in log messages', () =>
     {
       log.idk.info`kaomoji`
-      assert.ok(outstream.chunks[0].length > 7, 'Expected the kaomoji to be logged')
+      assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
     })
 
     test('Can use the "sad" kaomoji in log messages', () =>
     {
       log.sad.info`kaomoji`
-      assert.ok(outstream.chunks[0].length > 7, 'Expected the kaomoji to be logged')
+      assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
     })
 
     test('Can use the "angry" kaomoji in log messages', () =>
     {
       log.angry.info`kaomoji`
-      assert.ok(outstream.chunks[0].length > 7, 'Expected the kaomoji to be logged')
+      assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
     })
 
     test('Can use the "bad" kaomoji in log messages', () =>
     {
       log.bad.info`kaomoji`
-      assert.ok(outstream.chunks[0].length > 7, 'Expected the kaomoji to be logged')
+      assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
     })
 
     test('Can use the "corrected" kaomoji in log messages', () =>
     {
       log.corrected.info`kaomoji`
-      assert.ok(outstream.chunks[0].length > 7, 'Expected the kaomoji to be logged')
+      assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
     })
   })
 
@@ -593,7 +695,7 @@ suite('@superhero/log', () =>
     {
       const tree = log.tree([ 'foo', { bar: [ 'baz', 'qux' ], n: [ 1, 2, 3] } ])
       assert.equal(
-        tree, 
+        tree,
         '├─ foo\n'
       + '├─ bar\n'
       + '│  ├─ baz\n'
@@ -601,7 +703,7 @@ suite('@superhero/log', () =>
       + '└─ n\n'
       + '   ├─ 1\n'
       + '   ├─ 2\n'
-      + '   └─ 3', 
+      + '   └─ 3',
         'Expected a complicated mixed array and object tree structure')
     })
 
@@ -609,7 +711,7 @@ suite('@superhero/log', () =>
     {
       const tree = log.tree({ foo: [ { bar: 'baz' }, { baz: 'qux' }, { qux: '...' } ], qux: [ 1, 2, 3 ] })
       assert.equal(
-        tree, 
+        tree,
         '├─ foo\n'
       + '│  ├─ bar\n'
       + '│  │  └─ baz\n'
@@ -620,7 +722,7 @@ suite('@superhero/log', () =>
       + '└─ qux\n'
       + '   ├─ 1\n'
       + '   ├─ 2\n'
-      + '   └─ 3', 
+      + '   └─ 3',
         'Expected a complicated mixed object and array tree structure')
     })
 
@@ -628,8 +730,11 @@ suite('@superhero/log', () =>
     {
       log.use({ tree:true }).info`foo${{ bar:'baz' }}qux`
       assert.equal(
-        outstream.chunks[0].trim(),
-        'foo\n└─ bar\n   └─ baz\nqux', 
+        outstream.chunks[0],
+        'foo\n'
+      + '└─ bar\n'
+      + '   └─ baz\n'
+      + 'qux\n',
         'Expected the argument to the template to be logged as a tree structure')
     })
   })
@@ -814,14 +919,14 @@ suite('@superhero/log', () =>
     {
       log.use({ table:true }).info`123${{ foo: [ 'bar' ], baz: [ 'qux' ] }}456`
       assert.equal(
-        outstream.chunks[0].trim(),
+        outstream.chunks[0],
         '123\n'
       + '┌─────┬─────┐\n'
       + '│ foo │ baz │\n'
       + '├─────┼─────┤\n'
       + '│ bar │ qux │\n'
       + '└─────┴─────┘\n'
-      + '456', 
+      + '456\n', 
         'Expected the argument to the template to be logged as a table structure')
     })
 
@@ -829,7 +934,7 @@ suite('@superhero/log', () =>
     {
       log.use({ table:true }).info`123${{ foo: [ 'bar' ], baz: [ { foo: [ 'bar' ], baz: [ 'qux' ] } ] }}456`
       assert.equal(
-        outstream.chunks[0].trim(),
+        outstream.chunks[0],
         '123\n'
       + '┌─────┬───────────────┐\n'
       + '│ foo │ baz           │\n'
@@ -840,7 +945,7 @@ suite('@superhero/log', () =>
       + '│     │ │ bar │ qux │ │\n'
       + '│     │ └─────┴─────┘ │\n'
       + '└─────┴───────────────┘\n'
-      + '456',
+      + '456\n',
         'Expected the argument to the template to be logged as a table structure')
     })
   })

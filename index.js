@@ -242,6 +242,11 @@ export default class Log
     return this.#useTransformation('old-english')
   }
 
+  get strongOldEnglish()
+  {
+    return this.#useTransformation('strong-old-english')
+  }
+
   get script()
   {
     return this.#useTransformation('script')
@@ -252,9 +257,9 @@ export default class Log
     return this.#useTransformation('serif')
   }
 
-  get fat()
+  get strong()
   {
-    return this.#useTransformation('fat')
+    return this.#useTransformation('strong')
   }
 
   get fullwidth()
@@ -526,7 +531,7 @@ export default class Log
   #useKaomoji(kaomoji)
   {
     const random = Math.floor(Math.random() * kaomoji.length)
-    return this.use({ name:kaomoji[random] })
+    return this.use({ label:kaomoji[random] })
   }
 
   kaomoji(kaomoji)
