@@ -3,6 +3,7 @@ import Emitter    from 'node:events'
 import util       from 'node:util'
 import ansi       from '@superhero/log/ansi'
 import border     from '@superhero/log/border'
+import filter     from '@superhero/log/filter'
 import hex2rgb    from '@superhero/log/hex2rgb'
 import kaomoji    from '@superhero/log/kaomoji'
 import symbol     from '@superhero/log/symbol'
@@ -25,8 +26,9 @@ export default class Log
   static removeAllListeners = Reflect.get(Log.#emitter, 'removeAllListeners')
 
   static ansi       = ansi
-  static kaomoji    = kaomoji
   static border     = border
+  static filter     = filter
+  static kaomoji    = kaomoji
   static symbol     = symbol
   static transform  = transform
 
@@ -38,13 +40,14 @@ export default class Log
    */
   static config =
   {
-    transform : false,
     inline    : false,
     mute      : false,
     muteInfo  : false,
     muteWarn  : false,
     muteFail  : false,
     returns   : false,
+    filter    : false,
+    transform : false,
     tree      : false,
     table     : false,
     ansi      : true,
@@ -153,6 +156,218 @@ export default class Log
   set divider(divider)
   {
     return this.config.divider = divider
+  }
+
+  /**
+   * Adds a filter to the log instance.
+   * The filter is applied to the log messages before they are written to the output stream.
+   * 
+   * @param {string} name - The name of the filter to add.
+   * @param {function} [filter] - The optional filter function to apply to the log messages.
+   * 
+   * @throws {TypeError} If the provided filter is not a function.
+   * @throws {ReferenceError} If the filter name is unknown.
+   */
+  addFilter(name, filter)
+  {
+    const ccName = Log.filter.camelCase(name)
+
+    if('function' === typeof filter)
+    {
+      Log.filter[ccName] = filter
+    }
+    // any falsy value for filter will be ignored
+    else if(false !== !!filter)
+    {
+      const error = new TypeError(`Filter must be a function, got ${typeof filter}`)
+      error.code  = 'E_LOG_FILTER_INVALID'
+      throw error
+    }
+
+    if(ccName in Log.filter)
+    {
+      if(this.config.filter)
+      {
+        if(Array.isArray(this.config.filter))
+        {
+          // If the current filter is an array, append the new filter after 
+          // extracting the other filters to avoid pushing the new filter onto 
+          // a static array that is not meant to be modified in this context.
+          this.config.filter = [ ...this.config.filter, name ]
+        }
+        else
+        {
+          this.config.filter = [ this.config.filter, name ]
+        }
+      }
+      else
+      {
+        this.config.filter = [ name ]
+      }
+
+      return this
+    }
+
+    const error = new ReferenceError(`Unknown filter "${name}"`)
+    error.code  = 'E_LOG_FILTER_UNKNOWN'
+    throw error
+  }
+
+  /**
+   * Removes a filter from the log instance.
+   * If the filter is not found, it will be ignored.
+   * 
+   * @param {string} name - The name of the filter to remove.
+   * @returns {Log} The current instance of the Log class, allowing for method chaining.
+   */
+  removeFilter(name)
+  {
+    if(this.config.filter)
+    {
+      if(Array.isArray(this.config.filter))
+      {
+        this.config.filter = this.config.filter.filter(filter => filter !== name)
+      }
+      else if(this.config.filter === name)
+      {
+        this.config.filter = false
+      }
+    }
+
+    return this
+  }
+
+  /**
+   * Applies the configured filters to the provided string.
+   * If no filters are configured, the string is returned unchanged.
+   * 
+   * @param {string} str - The string to be filtered.
+   * @returns {string} The filtered string.
+   * @throws {ReferenceError} If an unknown filter is specified in the configuration.
+   */
+  filter(str)
+  {
+    if(this.config.filter)
+    {
+      const filters = Array.isArray(this.config.filter)
+                    ? this.config.filter
+                    : [ this.config.filter ]
+
+      for(const name of filters)
+      {
+        const ccName = Log.filter.camelCase(name)
+
+        if(ccName in Log.filter)
+        {
+          const filter = Log.filter[ccName]
+          str = filter(str)
+        }
+        else
+        {
+          const error = new ReferenceError(`Unknown filter "${name}"`)
+          error.code  = 'E_LOG_FILTER_UNKNOWN'
+          throw error
+        }
+      }
+    }
+
+    return str
+  }
+
+  #useFilter(name)
+  {
+    const filters = this.config.filter
+                  ? ( Array.isArray(this.config.filter)
+                    ? this.config.filter
+                    : [ this.config.filter ])
+                  : []
+
+    return this.use({ filter:[ ...filters, name ] })
+  }
+
+  get camelCase()
+  {
+    return this.#useFilter('camel-case')
+  }
+
+  get capitalize()
+  {
+    return this.#useFilter('capitalize')
+  }
+
+  get dashCase()
+  {
+    return this.#useFilter('dash-case')
+  }
+
+  get dotCase()
+  {
+    return this.#useFilter('dot-case')
+  }
+
+  get leet()
+  {
+    return this.#useFilter('leet')
+  }
+
+  get lowerCase()
+  {
+    return this.#useFilter('lower-case')
+  }
+
+  get pathCase()
+  {
+    return this.#useFilter('path-case')
+  }
+
+  get pipeCase()
+  {
+    return this.#useFilter('pipe-case')
+  }
+
+  get randomCase()
+  {
+    return this.#useFilter('random-case')
+  }
+
+  get reverse()
+  {
+    return this.#useFilter('reverse')
+  }
+
+  get reverseSentences()
+  {
+    return this.#useFilter('reverse-sentences')
+  }
+
+  get reverseWords()
+  {
+    return this.#useFilter('reverse-words')
+  }
+
+  get snakeCase()
+  {
+    return this.#useFilter('snake-case')
+  }
+
+  get spaceCase()
+  {
+    return this.#useFilter('space-case')
+  }
+
+  get tildeCase()
+  {
+    return this.#useFilter('tilde-case')
+  }
+
+  get titleCase()
+  {
+    return this.#useFilter('title-case')
+  }
+
+  get upperCase()
+  {
+    return this.#useFilter('upper-case')
   }
 
   /**
@@ -281,7 +496,7 @@ export default class Log
 
   #format(template, ...args)
   {
-    template = this.#transform(template)
+    template = this.#transform(template.map(str => this.filter(str)))
 
     if(this.config.ansi)
     {

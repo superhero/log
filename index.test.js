@@ -275,6 +275,124 @@ suite('@superhero/log', () =>
     }))
   })
 
+  suite('Filter', () =>
+  {
+    test('Can filter log messages using camelCase', () =>
+    {
+      log.camelCase.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'fooBarBaz', 'Expected a camelCase filtered message')
+    })
+
+    test('Can filter log messages using capitalize', () =>
+    {
+      log.capitalize.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'Foo bar baz', 'Expected a capitalize filtered message')
+    })
+
+    test('Can filter log messages using dashCase', () =>
+    {
+      log.dashCase.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'foo-bar-baz', 'Expected a dashCase filtered message')
+    })
+
+    test('Can filter log messages using dotCase', () =>
+    {
+      log.dotCase.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'foo.bar.baz', 'Expected a dotCase filtered message')
+    })
+
+    test('Can filter log messages using leet', () =>
+    {
+      log.leet.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'f00 b4r b4z', 'Expected a leet filtered message')
+    })
+
+    test('Can filter log messages using lowerCase', () =>
+    {
+      log.lowerCase.info`Foo Bar Baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'foo bar baz', 'Expected a lowerCase filtered message')
+    })
+
+    test('Can filter log messages using pathCase', () =>
+    {
+      log.pathCase.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'foo/bar/baz', 'Expected a pathCase filtered message')
+    })
+
+    test('Can filter log messages using pipeCase', () =>
+    {
+      log.pipeCase.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'foo|bar|baz', 'Expected a pipeCase filtered message')
+    })
+
+    test('Can filter log messages using randomCase', () =>
+    {
+      log.randomCase.info`foo bar baz`
+      assert.ok(outstream.chunks[0].trim().match(/^[fF][oO][oO] [bB][aA][rR] [bB][aA][zZ]$/), 'Expected a randomCase filtered message')
+    })
+
+    test('Can filter log messages using reverse', () =>
+    {
+      log.reverse.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'zab rab oof', 'Expected a reverse filtered message')
+    })
+
+    test('Can filter log messages using reverseSentences', () =>
+    {
+      log.reverseSentences.info`foo bar. baz qux. 1234`
+      assert.strictEqual(outstream.chunks[0].trim(), '1234. baz qux. foo bar', 'Expected a reverseSentences filtered message')
+    })
+
+    test('Can filter log messages using reverseWords', () =>
+    {
+      log.reverseWords.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'baz bar foo', 'Expected a reverseWords filtered message')
+    })
+
+    test('Can filter log messages using snakeCase', () =>
+    {
+      log.snakeCase.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'foo_bar_baz', 'Expected a snakeCase filtered message')
+    })
+
+    test('Can filter log messages using spaceCase', () =>
+    {
+      log.spaceCase.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'foo bar baz', 'Expected a spaceCase filtered message')
+    })
+
+    test('Can filter log messages using tildeCase', () =>
+    {
+      log.tildeCase.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'foo~bar~baz', 'Expected a tildeCase filtered message')
+    })
+
+    test('Can filter log messages using titleCase', () =>
+    {
+      log.titleCase.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'Foo Bar Baz', 'Expected a titleCase filtered message')
+    })
+
+    test('Can filter log messages using upperCase', () =>
+    {
+      log.upperCase.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'FOO BAR BAZ', 'Expected a upperCase filtered message')
+    })
+
+    test('Can add and remove filters', () =>
+    {
+      log.addFilter('dash-case')
+      log.addFilter('upper-case')
+
+      log.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[0].trim(), 'FOO-BAR-BAZ', 'Expected a filtered message')
+
+      log.removeFilter('dash-case')
+      log.info`foo bar baz`
+      assert.strictEqual(outstream.chunks[1].trim(), 'FOO BAR BAZ', 'Expected a filtered message without dash-case')
+    })
+  })
+
   suite('Transform', () =>
   {
     test('Can transform a string', () =>
@@ -290,7 +408,7 @@ suite('@superhero/log', () =>
       assert.strictEqual(outstream.chunks.length, 0, 'Expected no previous messages')
 
       log.info`foobar`
-      assert.strictEqual(outstream.chunks[0]?.trim(), 'foobar', 'Expected no transformed message')
+      assert.strictEqual(outstream.chunks[0].trim(), 'foobar', 'Expected no transformed message')
 
       log.circled.info`foobar`
       assert.strictEqual(outstream.chunks[1]?.trim(), 'ⓕⓞⓞⓑⓐⓡ', 'Expected a transformed message')
