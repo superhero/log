@@ -797,8 +797,6 @@ export default class Log
       table += tableRow + rightEnd
     }
 
-    console.log(table)
-
     return table
   }
 }
