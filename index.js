@@ -985,7 +985,8 @@ export default class Log
 
     const
       newLine     = this.config.EOL,
-      borders     = Log.border[String(this.config.border).toLowerCase()] ?? Log.border.light,
+      bordersType = String(this.config.border).toLowerCase(),
+      borders     = Log.border[bordersType] ?? Log.border.light,
       ansiTable   = str => this.config.ansi && this.config.ansiTable
                   ? this.ansi(this.config.ansiTable) + str + this.ansi('reset') 
                   : str,
@@ -1059,10 +1060,10 @@ export default class Log
     {
       const
         tableRow  = columns.reduce((tableRow, cells) => tableRow + (cells[row] || ''), ''),
-        rightEnd  = tableRow.startsWith(topLeft)
-                  ? topRight + newLine
-                  : tableRow.startsWith(vertical)
+        rightEnd  = tableRow.startsWith(vertical)
                   ? vertical + newLine
+                  : tableRow.startsWith(topLeft)
+                  ? topRight + newLine
                   : tableRow.startsWith(teeLeft)
                   ? teeRight + newLine
                   : bottomRight

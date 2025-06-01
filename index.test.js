@@ -978,6 +978,246 @@ suite('@superhero/log', () =>
         'Expected a simple table structure using double and light lines')
     })
 
+    test('Can format a simple table using dashed lines', () =>
+    {
+      const table = log.use({ border:'dashed' })
+                        .table({ 'foo': [ 'bar' ],
+                                 'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '┌╌╌╌╌╌┬╌╌╌╌╌┐\n'
+      + '┆ foo ┆ baz ┆\n'
+      + '├╌╌╌╌╌┼╌╌╌╌╌┤\n'
+      + '┆ bar ┆ qux ┆\n'
+      + '└╌╌╌╌╌┴╌╌╌╌╌┘',
+        'Expected a simple table structure using dashed lines')
+    })
+
+    test('Can format a simple table using dashed heavy lines', () =>
+    {
+      const table = log.use({ border:'dashed-heavy' })
+                        .table({ 'foo': [ 'bar' ],
+                                 'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '┏╍╍╍╍╍┳╍╍╍╍╍┓\n'
+      + '┇ foo ┇ baz ┇\n'
+      + '┣╍╍╍╍╍╋╍╍╍╍╍┫\n'
+      + '┇ bar ┇ qux ┇\n'
+      + '┗╍╍╍╍╍┻╍╍╍╍╍┛',
+        'Expected a simple table structure using dashed heavy lines')
+    })
+
+    test('Can format a simple table using dotted lines', () =>
+    {
+      const table = log.use({ border:'dotted' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '‧‧‧‧‧‧‧‧‧‧‧‧‧\n'
+      + '⁚ foo ⁚ baz ⁚\n'
+      + '⁚‧‧‧‧‧⁚‧‧‧‧‧⁚\n'
+      + '⁚ bar ⁚ qux ⁚\n'
+      + '‧‧‧‧‧‧‧‧‧‧‧‧‧\n',
+        'Expected a simple table structure using dotted lines')
+    })
+
+    test('Can format a simple table using rounded lines', () =>
+    {
+      const table = log.use({ border:'rounded' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '╭─────┬─────╮\n'
+      + '│ foo │ baz │\n'
+      + '├─────┼─────┤\n'
+      + '│ bar │ qux │\n'
+      + '╰─────┴─────╯',
+        'Expected a simple table structure using rounded lines')
+    })
+
+    test('Can format a simple table using rounded and dashed lines', () =>
+    {
+      const table = log.use({ border:'rounded-dashed' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '╭╌╌╌╌╌┬╌╌╌╌╌╮\n'
+      + '┆ foo ┆ baz ┆\n'
+      + '├╌╌╌╌╌┼╌╌╌╌╌┤\n'
+      + '┆ bar ┆ qux ┆\n'
+      + '╰╌╌╌╌╌┴╌╌╌╌╌╯',
+        'Expected a simple table structure using rounded and dashed lines')
+    })
+
+    test('Can format a simple list-table using light lines', () =>
+    {
+      const table = log.use({ border:'list' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '──────────\n'
+      + ' foo  baz \n'
+      + '──────────\n'
+      + ' bar  qux \n'
+      + '──────────\n',
+        'Expected a simple list-table structure using light lines')
+    })
+
+    test('Can format a simple list-table using heavy lines', () =>
+    {
+      const table = log.use({ border:'list-heavy' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '━━━━━━━━━━\n'
+      + ' foo  baz \n'
+      + '━━━━━━━━━━\n'
+      + ' bar  qux \n'
+      + '━━━━━━━━━━\n',
+        'Expected a simple list-table structure using heavy lines')
+    })
+
+    test('Can format a simple list-table using double lines', () =>
+    {
+      const table = log.use({ border:'list-double' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '══════════\n'
+      + ' foo  baz \n'
+      + '══════════\n'
+      + ' bar  qux \n'
+      + '══════════\n',
+        'Expected a simple list-table structure using double lines')
+    })
+
+    test('Can format a simple list-table using dashed lines', () =>
+    {
+      const table = log.use({ border:'list-dashed' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '╌╌╌╌╌╌╌╌╌╌\n'
+      + ' foo  baz \n'
+      + '╌╌╌╌╌╌╌╌╌╌\n'
+      + ' bar  qux \n'
+      + '╌╌╌╌╌╌╌╌╌╌\n',
+        'Expected a simple list-table structure using dashed lines')
+    })
+
+    test('Can format a simple list-table using heavy dashed lines', () =>
+    {
+      const table = log.use({ border:'list-dashed-heavy' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '╍╍╍╍╍╍╍╍╍╍\n'
+      + ' foo  baz \n'
+      + '╍╍╍╍╍╍╍╍╍╍\n'
+      + ' bar  qux \n'
+      + '╍╍╍╍╍╍╍╍╍╍\n',
+        'Expected a simple list-table structure using heavy dashed lines')
+    })
+
+    test('Can format a simple list-table using dotted lines', () =>
+    {
+      const table = log.use({ border:'list-dotted' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '┈┈┈┈┈┈┈┈┈┈\n'
+      + ' foo  baz \n'
+      + '┈┈┈┈┈┈┈┈┈┈\n'
+      + ' bar  qux \n'
+      + '┈┈┈┈┈┈┈┈┈┈\n',
+        'Expected a simple list-table structure using dotted lines')
+    })
+
+    test('Can format a simple list-table using dotted lines', () =>
+    {
+      const table = log.use({ border:'list-dotted-heavy' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '∙∙∙∙∙∙∙∙∙∙\n'
+      + ' foo  baz \n'
+      + '∙∙∙∙∙∙∙∙∙∙\n'
+      + ' bar  qux \n'
+      + '∙∙∙∙∙∙∙∙∙∙\n',
+        'Expected a simple list-table structure using dotted lines')
+    })
+
+    test('Can format a simple list-table using dotted lines', () =>
+    {
+      const table = log.use({ border:'list-dotted-heavy' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '∙∙∙∙∙∙∙∙∙∙\n'
+      + ' foo  baz \n'
+      + '∙∙∙∙∙∙∙∙∙∙\n'
+      + ' bar  qux \n'
+      + '∙∙∙∙∙∙∙∙∙∙\n',
+        'Expected a simple list-table structure using dotted lines')
+    })
+
+    test('Can format a simple table using diamond frame', () =>
+    {
+      const table = log.use({ border:'diamond' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '◤     ▼     ◥\n'
+      + '  foo   baz  \n'
+      + '▶     ◆     ◀\n'
+      + '  bar   qux  \n'
+      + '◣     ▲     ◢',
+        'Expected a simple table structure using diamond frame')
+    })
+
+    test('Can format a simple table using simple out-lines', () =>
+    {
+      const table = log.use({ border:'tiny' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '◜           ◝\n'
+      + '  foo   baz  \n'
+      + '      ‧      \n'
+      + '  bar   qux  \n'
+      + '◟           ◞',
+        'Expected a simple table structure using simple out-lines')
+    })
+
+    test('Can format a simple table using no lines', () =>
+    {
+      const table = log.use({ border:'none' })
+                       .table({ 'foo': [ 'bar' ], 
+                                'baz': [ 'qux' ] })
+      assert.equal(
+        table,
+        '\n'
+      + ' foo  baz \n'
+      + '\n'
+      + ' bar  qux \n'
+      + '\n',
+        'Expected a simple table structure using no lines')
+    })
+
     test('Can format a simple table with ANSI formatting', () =>
     {
       const table = log.use({ ansi:true, ansiValue:'bright-cyan' }).table({ 'foo': [ 'bar' ], 
