@@ -959,7 +959,7 @@ export default class Log
       throw error
     }
 
-    const entries = Object.entries(input)
+    let entries = Object.entries(input)
 
     if(entries.length < 1)
     {
@@ -968,11 +968,12 @@ export default class Log
       throw error
     }
 
+    // if all entries are not arrays, then map all values to an array...
+    // ...if some entries are arrays, then mapping them to a nested array will render the values 
+    // in the same cell.
     if(entries.some(([ , cells ]) => false === Array.isArray(cells)))
     {
-      const error = new TypeError(`The provided input table values must be an array`)
-      error.code  = 'E_LOG_TABLE_INVALID'
-      throw error
+      entries = entries.map(([ header, cells ]) => [ header, [ cells ] ])
     }
 
     if(entries.some(([ , cells ]) => cells.length !== entries[0][1].length))
@@ -985,19 +986,22 @@ export default class Log
     const
       newLine     = this.config.EOL,
       borders     = Log.border[String(this.config.border).toLowerCase()] ?? Log.border.light,
-      ansi        = str => this.config.ansi && this.config.ansiTable 
+      ansiTable   = str => this.config.ansi && this.config.ansiTable
                   ? this.ansi(this.config.ansiTable) + str + this.ansi('reset') 
                   : str,
-      topLeft     = ansi(borders.topLeft),
-      topRight    = ansi(borders.topRight),
-      bottomLeft  = ansi(borders.bottomLeft),
-      bottomRight = ansi(borders.bottomRight),
-      teeLeft     = ansi(borders.teeLeft),
-      teeRight    = ansi(borders.teeRight),
-      teeUp       = ansi(borders.teeUp),
-      teeDown     = ansi(borders.teeDown),
-      cross       = ansi(borders.cross),
-      vertical    = ansi(borders.vertical),
+      ansiValue   = str => this.config.ansi && this.config.ansiValue
+                  ? this.ansi(this.config.ansiValue) + str + this.ansi('reset') 
+                  : str,
+      topLeft     = ansiTable(borders.topLeft),
+      topRight    = ansiTable(borders.topRight),
+      bottomLeft  = ansiTable(borders.bottomLeft),
+      bottomRight = ansiTable(borders.bottomRight),
+      teeLeft     = ansiTable(borders.teeLeft),
+      teeRight    = ansiTable(borders.teeRight),
+      teeUp       = ansiTable(borders.teeUp),
+      teeDown     = ansiTable(borders.teeDown),
+      cross       = ansiTable(borders.cross),
+      vertical    = ansiTable(borders.vertical),
       // Standardize values to arrays of spaced strings
       valueMap    = value => 
       {
@@ -1033,14 +1037,14 @@ export default class Log
     {
       const
         empty       = ' '.repeat(cellDimensions.col[c]),
-        horizontal  = ansi(borders.horizontal.repeat(cellDimensions.col[c])),
+        horizontal  = ansiTable(borders.horizontal.repeat(cellDimensions.col[c])),
         top         = c === 0 ? topLeft     : teeUp,
         left        = c === 0 ? teeLeft     : cross,
         bottom      = c === 0 ? bottomLeft  : teeDown,
         tableTop    = top     + horizontal,
         tableMid    = left    + horizontal,
         tableEnd    = bottom  + horizontal,
-        rowsMap     = row => vertical + row[aligns[c] === 'right' ? 'padStart' : 'padEnd'](cellDimensions.col[c]),
+        rowsMap     = row => vertical + ansiValue(row[aligns[c] === 'right' ? 'padStart' : 'padEnd'](cellDimensions.col[c])),
         cellMap     = (cell, r) => cell.concat(Array(cellDimensions.row[r] - cell.length).fill(empty)).map(rowsMap),
         divider     = cell => [ ...cell, tableMid ]
 

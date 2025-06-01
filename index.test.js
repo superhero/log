@@ -980,15 +980,15 @@ suite('@superhero/log', () =>
 
     test('Can format a simple table with ANSI formatting', () =>
     {
-      const table = log.use({ ansi:true }).table({ 'foo': [ 'bar' ], 
-                                                   'baz': [ 'qux' ] })
+      const table = log.use({ ansi:true, ansiValue:'bright-cyan' }).table({ 'foo': [ 'bar' ], 
+                                                                            'baz': [ 'qux' ] })
 
       assert.equal(
         table,
-        '\x1B[2m\x1B[93m┌\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┬\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┐\x1B[0m\n'
-      + '\x1B[2m\x1B[93m│\x1B[0m foo \x1B[2m\x1B[93m│\x1B[0m baz \x1B[2m\x1B[93m│\x1B[0m\n'
+        '\x1B[2m\x1B[93m┌\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┬\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┐\x1B[0m\n' 
+      + '\x1B[2m\x1B[93m│\x1B[0m\x1B[96m foo \x1B[0m\x1B[2m\x1B[93m│\x1B[0m\x1B[96m baz \x1B[0m\x1B[2m\x1B[93m│\x1B[0m\n'
       + '\x1B[2m\x1B[93m├\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┼\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┤\x1B[0m\n'
-      + '\x1B[2m\x1B[93m│\x1B[0m bar \x1B[2m\x1B[93m│\x1B[0m qux \x1B[2m\x1B[93m│\x1B[0m\n'
+      + '\x1B[2m\x1B[93m│\x1B[0m\x1B[96m bar \x1B[0m\x1B[2m\x1B[93m│\x1B[0m\x1B[96m qux \x1B[0m\x1B[2m\x1B[93m│\x1B[0m\n'
       + '\x1B[2m\x1B[93m└\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┴\x1B[0m\x1B[2m\x1B[93m─────\x1B[0m\x1B[2m\x1B[93m┘\x1B[0m', 
         'Expected a simple table structure with ANSI formatting')
     })
@@ -1056,7 +1056,7 @@ suite('@superhero/log', () =>
       + '│ FOO                         │ false │ null │     │\n'
       + '│ BAR                         │       │      │     │\n'
       + '├─────────────────────────────┼───────┼──────┼─────┤\n'
-      + "│ { baz: 'qux' }              │ false │ null │     │\n"
+      + "│ { baz: 'qux' }              │ false │ null │     │\n" // would be a nested table if table was enabled in the config
       + '├─────────────────────────────┼───────┼──────┼─────┤\n'
       + '│ [Object: null prototype] {} │ false │ null │     │\n'
       + '└─────────────────────────────┴───────┴──────┴─────┘', 
@@ -1094,6 +1094,36 @@ suite('@superhero/log', () =>
       + '│     │ └─────┴─────┘ │\n'
       + '└─────┴───────────────┘\n'
       + '456\n',
+        'Expected the argument to the template to be logged as a table structure')
+    })
+
+    test('Can log a mapped flat object as a table', () =>
+    {
+      log.use({ table:true }).info`${{ foo: 'bar', baz: 'qux' }}`
+      assert.equal(
+        outstream.chunks[0],
+        '┌─────┬─────┐\n'
+      + '│ foo │ baz │\n'
+      + '├─────┼─────┤\n'
+      + '│ bar │ qux │\n'
+      + '└─────┴─────┘\n',
+        'Expected the argument to the template to be logged as a table structure')
+    })
+
+    test('Can log a nested mapped flat object as a nested table', () =>
+    {
+      log.use({ table:true }).info`${{ foo: 'bar', baz: { qux: 123 } }}`
+      assert.equal(
+        outstream.chunks[0],
+        '┌─────┬─────────┐\n'
+      + '│ foo │ baz     │\n'
+      + '├─────┼─────────┤\n'
+      + '│ bar │ ┌─────┐ │\n'
+      + '│     │ │ qux │ │\n'
+      + '│     │ ├─────┤ │\n'
+      + '│     │ │ 123 │ │\n'
+      + '│     │ └─────┘ │\n'
+      + '└─────┴─────────┘\n',
         'Expected the argument to the template to be logged as a table structure')
     })
   })
