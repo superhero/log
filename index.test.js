@@ -25,6 +25,9 @@ suite('@superhero/log', () =>
 
   beforeEach(() =>
   {
+    // Clear all static listeners between each test to ensure test isolation.
+    Log.removeAllListeners()
+
     // Clear the chunks before each test
     outstream.chunks = []
     errstream.chunks = []
@@ -661,6 +664,75 @@ suite('@superhero/log', () =>
     {
       log.corrected.info`kaomoji`
       assert.ok(outstream.chunks[0].length > 10, 'Expected the kaomoji to be logged')
+    })
+  })
+
+  suite('Symbol', () =>
+  {
+    test('Can use status symbols as label', () =>
+    {
+      log.status.info`info message`
+      log.status.warn`warn message`
+      log.status.fail`fail message`
+
+      assert.equal(outstream.chunks[0][0], Log.symbol.info, 'Expected the first character of the info message to be the info symbol')
+      assert.equal(outstream.chunks[1][0], Log.symbol.warn, 'Expected the first character of the warn message to be the warn symbol')
+      assert.equal(errstream.chunks[0][0], Log.symbol.fail, 'Expected the first character of the fail message to be the fail symbol')
+    })
+
+    test('Can use done symbol in log messages', () =>
+    {
+      log.done.info`info message`
+      log.done.warn`warn message`
+      log.done.fail`fail message`
+
+      assert.equal(outstream.chunks[0][0], Log.symbol.done, 'Expected the first character of the info message to be the done symbol')
+      assert.equal(outstream.chunks[1][0], Log.symbol.done, 'Expected the first character of the warn message to be the done symbol')
+      assert.equal(errstream.chunks[0][0], Log.symbol.done, 'Expected the first character of the fail message to be the done symbol')
+    })
+
+    test('Can use flag symbol in log messages', () =>
+    {
+      log.flag.info`info message`
+      log.flag.warn`warn message`
+      log.flag.fail`fail message`
+
+      assert.equal(outstream.chunks[0][0], Log.symbol.flag, 'Expected the first character of the info message to be the flag symbol')
+      assert.equal(outstream.chunks[1][0], Log.symbol.flag, 'Expected the first character of the warn message to be the flag symbol')
+      assert.equal(errstream.chunks[0][0], Log.symbol.flag, 'Expected the first character of the fail message to be the flag symbol')
+    })
+
+    test('Can use time symbol in log messages', () =>
+    {
+      log.time.info`info message`
+      log.time.warn`warn message`
+      log.time.fail`fail message`
+
+      assert.equal(outstream.chunks[0][0], Log.symbol.time, 'Expected the first character of the info message to be the time symbol')
+      assert.equal(outstream.chunks[1][0], Log.symbol.time, 'Expected the first character of the warn message to be the time symbol')
+      assert.equal(errstream.chunks[0][0], Log.symbol.time, 'Expected the first character of the fail message to be the time symbol')
+    })
+
+    test('Can use love symbol in log messages', () =>
+    {
+      log.love.info`info message`
+      log.love.warn`warn message`
+      log.love.fail`fail message`
+
+      assert.equal(outstream.chunks[0][0], Log.symbol.love, 'Expected the first character of the info message to be the love symbol')
+      assert.equal(outstream.chunks[1][0], Log.symbol.love, 'Expected the first character of the warn message to be the love symbol')
+      assert.equal(errstream.chunks[0][0], Log.symbol.love, 'Expected the first character of the fail message to be the love symbol')
+    })
+
+    test('Can use dead symbol in log messages', () =>
+    {
+      log.dead.info`info message`
+      log.dead.warn`warn message`
+      log.dead.fail`fail message`
+
+      assert.equal(outstream.chunks[0][0], Log.symbol.dead, 'Expected the first character of the info message to be the dead symbol')
+      assert.equal(outstream.chunks[1][0], Log.symbol.dead, 'Expected the first character of the warn message to be the dead symbol')
+      assert.equal(errstream.chunks[0][0], Log.symbol.dead, 'Expected the first character of the fail message to be the dead symbol')
     })
   })
 

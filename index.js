@@ -689,9 +689,9 @@ export default class Log
    * 
    * const log = new Log()
    * 
-   * log.set.info({ text: 'blue' })
-   * log.set.warn({ text: 'yellow' })
-   * log.set.fail({ text: 'red })
+   * log.set.info({ ansiText: 'blue' })
+   * log.set.warn({ ansiText: 'yellow' })
+   * log.set.fail({ ansiText: 'red })
    * 
    * logger.info`This will be blue`
    * logger.warn`This will be yellow`
@@ -707,7 +707,7 @@ export default class Log
         case 'warn':
         case 'fail':
         {
-          const using  = this.use({ info:false, warn:false, fail:false, ...config })
+          const using  = this.use({ ...config, info:null, warn:null, fail:null })
           this[logger] = using[logger].bind(using)
           return true
         }
@@ -825,6 +825,45 @@ export default class Log
   get corrected()
   {
     return this.#useKaomoji(Log.kaomoji.corrected)
+  }
+
+  #useSymbol(label, ansi)
+  {
+    return this.use({ divider:' ', ansiLabel:ansi, ansiText:ansi, label })
+  }
+
+  get status()
+  {
+    const log = this.#useSymbol()
+    log.set.info = { ansiText: 'blue',    label: Log.symbol.info }
+    log.set.warn = { ansiText: 'yellow',  label: Log.symbol.warn }
+    log.set.fail = { ansiText: 'red',     label: Log.symbol.fail }
+    return log
+  }
+
+  get done()
+  {
+    return this.#useSymbol(Log.symbol.done, 'green')
+  }
+
+  get flag()
+  {
+    return this.#useSymbol(Log.symbol.flag, 'bright-yellow')
+  }
+
+  get time()
+  {
+    return this.#useSymbol(Log.symbol.time, 'cyan')
+  }
+
+  get love()
+  {
+    return this.#useSymbol(Log.symbol.love, 'magenta')
+  }
+
+  get dead()
+  {
+    return this.#useSymbol(Log.symbol.dead, 'bright-black')
   }
 
   /**
