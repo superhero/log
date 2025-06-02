@@ -752,6 +752,14 @@ export default class Log
     if(this.config.returns) return this.#normal(...args)
   }
 
+  /**
+   * Alias for `fail` method.
+   */
+  error(...args)
+  {
+    return this.fail(...args)
+  }
+
   #useKaomoji(kaomoji)
   {
     const random = Math.floor(Math.random() * kaomoji.length)
@@ -835,9 +843,9 @@ export default class Log
   get status()
   {
     const log = this.#useSymbol()
-    log.set.info = { ansiText: 'blue',    label: Log.symbol.info }
-    log.set.warn = { ansiText: 'yellow',  label: Log.symbol.warn }
-    log.set.fail = { ansiText: 'red',     label: Log.symbol.fail }
+    log.set.info = { ansiLabel: 'blue',   ansiText: 'blue',   label: Log.symbol.info }
+    log.set.warn = { ansiLabel: 'yellow', ansiText: 'yellow', label: Log.symbol.warn }
+    log.set.fail = { ansiLabel: 'red',    ansiText: 'red',    label: Log.symbol.fail }
     return log
   }
 
