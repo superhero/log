@@ -8,7 +8,6 @@ import hex2rgb    from '@superhero/log/hex2rgb'
 import kaomoji    from '@superhero/log/kaomoji'
 import symbol     from '@superhero/log/symbol'
 import transform  from '@superhero/log/transform'
-import { config } from 'node:process'
 
 export default class Log
 {
@@ -35,8 +34,8 @@ export default class Log
 
   /**
    * Static highlevel configurations...
-   * Used for global default configurations.
-   * Instance specifications will override the global defaults.
+   * Used for static default configurations.
+   * Instance specifications will override the static defaults.
    * @see this.config getter
    */
   static config =
@@ -53,6 +52,7 @@ export default class Log
     table     : false,
     ansi      : true,
     reset     : true,
+    staticLog : true,
     outstream : process.stdout, 
     errstream : process.stderr,
     EOL       : EOL,
@@ -77,18 +77,21 @@ export default class Log
     Object.defineProperty(this, 'emitter', { value: Reflect.get(config, 'emitter') })
 
     // Inline configuration alias for EOL = ''
-    this.inline = this.config.inline 
+    this.inline = config.inline 
 
     // Set the specific configurations for each log method if configured
-    if(this.config.info) this.set.info = this.config.info
-    if(this.config.warn) this.set.warn = this.config.warn
-    if(this.config.fail) this.set.fail = this.config.fail
+    if(config.info) this.set.info = config.info
+    if(config.warn) this.set.warn = config.warn
+    if(config.fail) this.set.fail = config.fail
 
     // Makes it possible for dependent code to hook into when a log event is 
     // emitted by any of the log instances...
-    this.config.emitter?.on('info', (...args) => Log.emit('info', config, ...args))
-    this.config.emitter?.on('warn', (...args) => Log.emit('warn', config, ...args))
-    this.config.emitter?.on('fail', (...args) => Log.emit('fail', config, ...args))
+    if(config.emitter && config.staticLog)
+    {
+      this.config.emitter.on('info', (...args) => Log.emit('info', config, ...args))
+      this.config.emitter.on('warn', (...args) => Log.emit('warn', config, ...args))
+      this.config.emitter.on('fail', (...args) => Log.emit('fail', config, ...args))
+    }
   }
 
   /**
@@ -676,7 +679,8 @@ export default class Log
    */
   use(config)
   {
-    return new Log({ ...this.config, ...config })
+    // staticLog:false becouse we inherit the emitter from "this" config
+    return new Log({ ...this.config, staticLog:false, ...config })
   }
 
   /**
@@ -844,9 +848,9 @@ export default class Log
   get status()
   {
     const log = this.#useSymbol()
-    log.set.info = { ansiLabel: 'blue',   ansiText: 'blue',   label: Log.symbol.flag }
+    log.set.info = { ansiLabel: 'blue',   ansiText: 'blue',   label: Log.symbol.arrowHead }
     log.set.warn = { ansiLabel: 'yellow', ansiText: 'yellow', label: Log.symbol.bolt }
-    log.set.fail = { ansiLabel: 'red',    ansiText: 'red',    label: Log.symbol.no }
+    log.set.fail = { ansiLabel: 'red',    ansiText: 'red',    label: Log.symbol.fail }
     return log
   }
 

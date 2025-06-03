@@ -1,7 +1,7 @@
 import Log                          from '@superhero/log'
 import assert                       from 'node:assert'
 import { Writable }                 from 'node:stream'
-import { beforeEach, suite, test }  from 'node:test'
+import { afterEach, beforeEach, suite, test }  from 'node:test'
 
 suite('@superhero/log', () =>
 {
@@ -675,9 +675,9 @@ suite('@superhero/log', () =>
       log.status.warn`warn message`
       log.status.fail`fail message`
 
-      assert.equal(outstream.chunks[0][0], Log.symbol.flag, 'Expected the first character of the info message to be the "flag" symbol')
-      assert.equal(outstream.chunks[1][0], Log.symbol.bolt, 'Expected the first character of the warn message to be the "bolt" symbol')
-      assert.equal(errstream.chunks[0][0], Log.symbol.no,   'Expected the first character of the fail message to be the "no" symbol')
+      assert.equal(outstream.chunks[0][0], Log.symbol.arrowHead,  'Expected the first character of the info message to be the "arrowHead" symbol')
+      assert.equal(outstream.chunks[1][0], Log.symbol.bolt,       'Expected the first character of the warn message to be the "bolt" symbol')
+      assert.equal(errstream.chunks[0][0], Log.symbol.fail,       'Expected the first character of the fail message to be the "fail" symbol')
     })
 
     test('Can use yes/no symbols in log messages', () =>

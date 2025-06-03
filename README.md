@@ -210,6 +210,7 @@ log.fail`Fail message with error: ${new Error()}`
 | `tree`          | Boolean | `false`    | Structures arguemnts as a tree structure               |
 | `ansi`          | Boolean | `true`     | Format using using ANSI escpape codes                  |
 | `reset`         | Boolean | `true`     | Reset when using ANSI                                  |
+| `staticLog`     | Boolean | `true`     | Ability to disable static log propagation              |
 | `outstream`     | Stream  | `stdout`   | Output stream                                          |
 | `errstream`     | Stream  | `stderr`   | Error stream                                           |
 | `EOL`           | String  | `os`.`EOL` | New line, or other end of line (EOL) character         |
