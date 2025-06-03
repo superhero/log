@@ -8,6 +8,7 @@ import hex2rgb    from '@superhero/log/hex2rgb'
 import kaomoji    from '@superhero/log/kaomoji'
 import symbol     from '@superhero/log/symbol'
 import transform  from '@superhero/log/transform'
+import { config } from 'node:process'
 
 export default class Log
 {
@@ -843,20 +844,20 @@ export default class Log
   get status()
   {
     const log = this.#useSymbol()
-    log.set.info = { ansiLabel: 'blue',   ansiText: 'blue',   label: Log.symbol.info }
-    log.set.warn = { ansiLabel: 'yellow', ansiText: 'yellow', label: Log.symbol.warn }
-    log.set.fail = { ansiLabel: 'red',    ansiText: 'red',    label: Log.symbol.fail }
+    log.set.info = { ansiLabel: 'blue',   ansiText: 'blue',   label: Log.symbol.flag }
+    log.set.warn = { ansiLabel: 'yellow', ansiText: 'yellow', label: Log.symbol.bolt }
+    log.set.fail = { ansiLabel: 'red',    ansiText: 'red',    label: Log.symbol.no }
     return log
   }
 
-  get done()
+  get yes()
   {
-    return this.#useSymbol(Log.symbol.done, 'green')
+    return this.#useSymbol(Log.symbol.strongYes, this.config.ansiText)
   }
 
-  get flag()
+  get no()
   {
-    return this.#useSymbol(Log.symbol.flag, 'bright-yellow')
+    return this.#useSymbol(Log.symbol.strongNo, this.config.ansiText)
   }
 
   get time()
