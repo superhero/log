@@ -675,31 +675,18 @@ suite('@superhero/log', () =>
       log.status.warn`warn message`
       log.status.fail`fail message`
 
-      assert.equal(outstream.chunks[0][0], Log.symbol.info, 'Expected the first character of the info message to be the info symbol')
-      assert.equal(outstream.chunks[1][0], Log.symbol.warn, 'Expected the first character of the warn message to be the warn symbol')
-      assert.equal(errstream.chunks[0][0], Log.symbol.fail, 'Expected the first character of the fail message to be the fail symbol')
+      assert.equal(outstream.chunks[0][0], Log.symbol.flag, 'Expected the first character of the info message to be the "flag" symbol')
+      assert.equal(outstream.chunks[1][0], Log.symbol.bolt, 'Expected the first character of the warn message to be the "bolt" symbol')
+      assert.equal(errstream.chunks[0][0], Log.symbol.no,   'Expected the first character of the fail message to be the "no" symbol')
     })
 
-    test('Can use done symbol in log messages', () =>
+    test('Can use yes/no symbols in log messages', () =>
     {
-      log.done.info`info message`
-      log.done.warn`warn message`
-      log.done.fail`fail message`
+      log.yes.info`yes info message`
+      log.no.info`no info message`
 
-      assert.equal(outstream.chunks[0][0], Log.symbol.done, 'Expected the first character of the info message to be the done symbol')
-      assert.equal(outstream.chunks[1][0], Log.symbol.done, 'Expected the first character of the warn message to be the done symbol')
-      assert.equal(errstream.chunks[0][0], Log.symbol.done, 'Expected the first character of the fail message to be the done symbol')
-    })
-
-    test('Can use flag symbol in log messages', () =>
-    {
-      log.flag.info`info message`
-      log.flag.warn`warn message`
-      log.flag.fail`fail message`
-
-      assert.equal(outstream.chunks[0][0], Log.symbol.flag, 'Expected the first character of the info message to be the flag symbol')
-      assert.equal(outstream.chunks[1][0], Log.symbol.flag, 'Expected the first character of the warn message to be the flag symbol')
-      assert.equal(errstream.chunks[0][0], Log.symbol.flag, 'Expected the first character of the fail message to be the flag symbol')
+      assert.equal(outstream.chunks[0][0], Log.symbol.strongYes, 'Expected the first character of the message to be the strong "yes" symbol')
+      assert.equal(outstream.chunks[1][0], Log.symbol.strongNo,  'Expected the first character of the message to be the strong "no" symbol')
     })
 
     test('Can use time symbol in log messages', () =>
