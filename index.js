@@ -95,11 +95,6 @@ export default class Log
 
     // Ensure that the EOL always is a string.
     Log.config.EOL = String(Log.config.EOL)
-
-    if(config.inline)
-    {
-      Log.config.EOL = ''
-    }
   }
 
   /**
