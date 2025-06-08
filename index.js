@@ -38,7 +38,7 @@ export default class Log
    * Instance specifications will override the static defaults.
    * @see this.config getter
    */
-  static config =
+  static #config =
   {
     inline    : false,
     mute      : false,
@@ -66,6 +66,53 @@ export default class Log
     ansiTree  : 'dim bright-black'
   }
 
+  /**
+   * Static setter for the private instance configurations.
+   * This allows to set the configuration of the instance by assigning the values of the 
+   * argument to the already defined default configurations.
+   * Assigning the provided configuration arguemnt to the static config prevents the user from
+   * accidentally overwriting the default static defaults that defines the required config keys.
+   * 
+   * @param {Object} config - The configuration object to assign.
+   * 
+   * @returns {Object} The current static configuration of the Log class.
+   * 
+   * @throws {TypeError} If the provided config is not an object.
+   */
+  static set config(config)
+  {
+    const configType = Object.prototype.toString.call(config)
+
+    if('[object Object]' !== configType)
+    {
+      const error = new TypeError(`Log.config must be an [object Object], got ${configType}`)
+      error.code  = 'E_LOG_CONFIG_INVALID'
+      throw error
+    }
+
+    // Assign the static config with the provided config.
+    Object.assign(Log.#config, config)
+
+    // Ensure that the EOL always is a string.
+    Log.config.EOL = String(Log.config.EOL)
+
+    if(config.inline)
+    {
+      Log.config.EOL = ''
+    }
+  }
+
+  /**
+   * Static getter for the private static configurations.
+   * This allows to get the static configuration of the Log class.
+   * 
+   * @returns {Object} The current static configuration of the Log class.
+   */
+  static get config()
+  {
+    return Log.#config
+  }
+
   constructor(config)
   {
     config = new Proxy(Object.assign({ emitter:new Emitter }, config),
@@ -77,7 +124,7 @@ export default class Log
     Object.defineProperty(this, 'emitter', { value: Reflect.get(config, 'emitter') })
 
     // Inline configuration alias for EOL = ''
-    this.inline = config.inline 
+    this.inline = config.inline
 
     // Set the specific configurations for each log method if configured
     if(config.info) this.set.info = config.info
