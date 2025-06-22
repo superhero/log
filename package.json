@@ -1,6 +1,6 @@
 {
   "name": "@superhero/log",
-  "version": "4.7.3",
+  "version": "4.7.4",
   "description": "A simple logger - intended to make it easy to configure, control and extend application log behaviour.",
   "keywords": [
     "logger",
@@ -20,7 +20,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@superhero/audit": "4.7.3",
+    "@superhero/audit": "4.7.4",
     "@superhero/syntax-check": "0.0.2"
   },
   "author": {
@@ -29,6 +29,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/superhero/log"
+    "url": "git+https://github.com/superhero/log.git"
   }
 }
