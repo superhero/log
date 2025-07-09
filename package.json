@@ -1,6 +1,6 @@
 {
   "name": "@superhero/log",
-  "version": "4.7.4",
+  "version": "4.7.5",
   "description": "A simple logger - intended to make it easy to configure, control and extend application log behaviour.",
   "keywords": [
     "logger",
@@ -20,7 +20,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@superhero/audit": "4.7.4",
+    "@superhero/audit": "4.7.5",
     "@superhero/syntax-check": "0.0.2"
   },
   "author": {
