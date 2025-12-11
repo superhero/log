@@ -555,7 +555,7 @@ export default class Log
 
       return label + this.label + this.divider
             + text + template.reduce((result, part, i) => result
-                                                        + reset + this.#inspect(args[i - 1], true) 
+                                                        + reset + this.#inspect(args[i - 1], true, !!result) 
                                                         + text  + part) + reset
     }
     else
@@ -571,10 +571,10 @@ export default class Log
 
   #normal(template, ...args)
   {
-    return template.reduce((result, part, i) => result + this.#inspect(args[i - 1]) + part)
+    return template.reduce((result, part, i) => result + this.#inspect(args[i - 1], false, !!result) + part)
   }
 
-  #inspect(arg, ansi)
+  #inspect(arg, ansi, isSuccessor)
   {
     if(this.config.tree
     && 'object' === typeof arg 
@@ -582,7 +582,7 @@ export default class Log
     {
       try
       {
-        return this.tree(arg).trim()
+        return (isSuccessor ? this.config.EOL : '') + this.tree(arg).trim()
       }
       catch(reason)
       {
@@ -596,7 +596,7 @@ export default class Log
     {
       try
       {
-        return this.table(arg).trim()
+        return (isSuccessor ? this.config.EOL : '') + this.table(arg).trim()
       }
       catch(reason)
       {
@@ -1109,7 +1109,7 @@ export default class Log
           case '[object Boolean]'   : return String(value).trim()
           case '[object Undefined]' : return ''
           case '[object Object]'    : 
-          default                   : return this.#inspect(value, this.config.ansi)
+          default                   : return this.#inspect(value, this.config.ansi, false)
         }
       },
       cellMap = value => valueMap(value).trim().split(newLine).map(value => ` ${value} `),

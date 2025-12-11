@@ -905,7 +905,7 @@ suite('@superhero/log', () =>
 
     test('Can log a tree structure', () =>
     {
-      log.use({ tree:true }).info`foo\n${{ bar:'baz' }}\nqux`
+      log.use({ tree:true }).info`foo${{ bar:'baz' }}\nqux`
       assert.equal(
         outstream.chunks[0],
         'foo\n'
@@ -917,7 +917,7 @@ suite('@superhero/log', () =>
 
     test('Can log a tree structure with ANSI formatting', () =>
     {
-      log.use({ ansi:true, tree:true }).info`foobar:\n${{ foo:'bar', baz:[ 1, 2, 3 ] }}`
+      log.use({ ansi:true, tree:true }).info`foobar:${{ foo:'bar', baz:[ 1, 2, 3 ] }}`
       assert.equal(
         outstream.chunks[0],
         'foobar:\n'
@@ -1364,7 +1364,7 @@ suite('@superhero/log', () =>
 
     test('Can log using enabled table', () =>
     {
-      log.use({ table:true }).info`123\n${{ foo: [ 'bar' ], baz: [ 'qux' ] }}\n456`
+      log.use({ table:true }).info`123${{ foo: [ 'bar' ], baz: [ 'qux' ] }}\n456`
       assert.equal(
         outstream.chunks[0],
         '123\n'
@@ -1379,7 +1379,7 @@ suite('@superhero/log', () =>
 
     test('Can log a nested table using enabled table', () =>
     {
-      log.use({ table:true }).info`123\n${{ foo: [ 'bar' ], baz: [ { foo: [ 'bar' ], baz: [ 'qux' ] } ] }}\n456`
+      log.use({ table:true }).info`123${{ foo: [ 'bar' ], baz: [ { foo: [ 'bar' ], baz: [ 'qux' ] } ] }}\n456`
       assert.equal(
         outstream.chunks[0],
         '123\n'
