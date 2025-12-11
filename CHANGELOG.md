@@ -1,4 +1,10 @@
 ---
+#### v4.7.25
+---
+
+Altered so that inspect uses EOL on tree and table when the data is a successor to a log message
+
+---
 #### v4.7.24
 ---\n\nVersion alignment...
 
