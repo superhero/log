@@ -1058,7 +1058,14 @@ export default class Log
    */
   table(input)
   {
-    if('[object Object]' !== Object.prototype.toString.call(input))
+    const type = Object.prototype.toString.call(input)
+
+    if('[object Map]' === type)
+    {
+      input = Object.fromEntries(input.entries())
+    }
+
+    if('[object Object]' !== type)
     {
       const error = new TypeError(`The provided input table must be an [object Object]`)
       error.code  = 'E_LOG_TABLE_INVALID'
@@ -1114,12 +1121,14 @@ export default class Log
       {
         switch(Object.prototype.toString.call(value))
         {
+          case '[object Set]'       : value = Array.from(value) // Fallthrough to 'Array' case...
           case '[object Array]'     : return value.map(valueMap).join(newLine)
           case '[object String]'    :
           case '[object Number]'    :
           case '[object Null]'      : 
           case '[object Boolean]'   : return String(value).trim()
           case '[object Undefined]' : return ''
+          case '[object Map]'       : value = Object.fromEntries(value.entries()) // Fallthrough to 'Object' case...
           case '[object Object]'    : 
           default                   : return this.#inspect(value, this.config.ansi, false)
         }
