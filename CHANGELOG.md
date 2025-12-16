@@ -1,4 +1,18 @@
 ---
+#### v4.7.28
+---
+
+table rendering support for Set and Map
+
+---
+
+tree rendering support for Set and Map
+
+---
+
+v4.7.26
+
+---
 #### v4.7.26
 ---\n\nVersion alignment...
 
