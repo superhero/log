@@ -963,6 +963,12 @@ export default class Log
   {
     switch(Object.prototype.toString.call(children))
     {
+      case '[object Set]':
+      {
+        // Normalizes Set to Array
+        children = Array.from(children)
+        // Fallthrough to 'Array' case...
+      }
       case '[object Array]':
       {
         for(let i = 0; i < children.length; i++)
@@ -995,6 +1001,12 @@ export default class Log
           }
         }
         break
+      }
+      case '[object Map]':
+      {
+        // Normalizes Map to Object
+        children = Object.fromEntries(children.entries())
+        // Fallthrough to 'Object' case...
       }
       case '[object Object]':
       {
