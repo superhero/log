@@ -736,13 +736,13 @@ export default class Log
    * 
    * const log = new Log()
    * 
-   * log.set.info({ ansiText: 'blue' })
-   * log.set.warn({ ansiText: 'yellow' })
-   * log.set.fail({ ansiText: 'red })
+   * log.set.info = { ansiText: 'blue' }
+   * log.set.warn = { ansiText: 'yellow' }
+   * log.set.fail = { ansiText: 'red }
    * 
-   * logger.info`This will be blue`
-   * logger.warn`This will be yellow`
-   * logger.fail`This will be red`
+   * log.info`This will be blue`
+   * log.warn`This will be yellow`
+   * log.fail`This will be red`
    */
   set = new Proxy({},
   {
