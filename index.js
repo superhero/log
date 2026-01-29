@@ -1056,20 +1056,34 @@ export default class Log
       }
       default:
       {
-        const inspected = this.#inspectFallback(children, this.config.ansi)
+        let inspected = this.#inspectFallback(children, this.config.ansi)
 
-        prefix += branch + ' '
-
-        const indentation = Array(prefix.length).fill(' ')
-
-        if(branch[0] === borders.teeLeft
-        || branch[0] === borders.teeUp)
+        // Prevent an added prefix space for a root node
+        if(prefix)
         {
-          indentation[prefix.length - branch.length - 1] = borders.vertical
+          prefix += branch + ' '
+
+          const inspectedLines = inspected.split(this.config.EOL)
+
+          // Format multi line strings to fit the tree structure by adding
+          // the expected indentation on each line.
+          if(inspectedLines.length > 1)
+          {
+            const indentation = Array(prefix.length).fill(' ')
+
+            if(branch[0] === borders.teeLeft
+            || branch[0] === borders.teeUp)
+            {
+              indentation[prefix.length - branch.length - 1] = borders.vertical
+            }
+
+            inspected = inspectedLines.join(this.config.EOL + ansi(indentation.join('')))
+          }
+
+          inspected = ansi(prefix) + inspected
         }
 
-        const pre = ansi(prefix)
-        yield pre + inspected.split(this.config.EOL).join(this.config.EOL + ansi(indentation.join('')))
+        yield inspected
       }
     }
   }
