@@ -1,4 +1,14 @@
 ---
+#### v4.8.1
+---
+
+Resolved some issues in regards to how nested arrays shows results, but more need to be addressed before all these edge cases can be concidered resolved
+
+---
+
+Updated some small documentation example
+
+---
 ## Version: 4.8.0
 ---\n\nVersion alignment...
 
