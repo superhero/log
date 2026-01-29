@@ -1056,7 +1056,7 @@ export default class Log
       }
       default:
       {
-        const inspected = this.#inspect(children, this.config.ansi, false)
+        const inspected = this.#inspectFallback(children, this.config.ansi)
 
         prefix += branch + ' '
 
