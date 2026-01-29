@@ -605,10 +605,17 @@ export default class Log
     }
 
     // default inspection 
+    return this.#inspectFallback(arg, ansi)
+  }
+
+  #inspectFallback(arg, ansi)
+  {
+    // default inspection 
     return 'object' === typeof arg
     ? util.inspect(arg, { colors: this.config.ansi && ansi })
     : (ansi && this.config.ansi && this.config.ansiValue
-      ? this.ansi(this.config.ansiValue) : '') + arg
+      ? this.ansi(this.config.ansiValue) 
+      : '') + arg
   }
 
   #write(stream, str)
@@ -951,7 +958,7 @@ export default class Log
               : str
 
     let output = ''
-    for(const childTree of this.#treeRecursion(tree, '', borders, ansi))
+    for(const childTree of this.#treeRecursion(tree, '', '', borders, ansi))
     {
       output += this.config.EOL + childTree
     }
@@ -959,7 +966,7 @@ export default class Log
     return output.trim()
   }
 
-  * #treeRecursion(children, prefix, borders, ansi, hasLast)
+  * #treeRecursion(children, prefix, branch, borders, ansi, hasLast)
   {
     switch(Object.prototype.toString.call(children))
     {
@@ -987,13 +994,22 @@ export default class Log
           {
             if(child.length)
             {
-              yield ansi(prefix + branch + borders.horizontal + borders.teeUp + borders.horizontal) + ' ' + String(child[0])
-              yield * this.#treeRecursion(child.slice(1), prefix + nextPrefix, borders, ansi)
+              const firstConnect  = child.length > 1 ? borders.teeUp : borders.horizontal
+              const firstPrefix   = prefix + branch + borders.horizontal
+              const firstItem     = [ ...this.#treeRecursion(child[0], firstPrefix, firstConnect + borders.horizontal, borders, ansi) ].join(this.config.EOL)
+              const rest          = child.slice(1)
+              
+              yield firstItem
+
+              if(rest.length)
+              {
+                yield * this.#treeRecursion(child.slice(1), prefix + nextPrefix, branch, borders, ansi)
+              }
             }
           }
           else if('object' === typeof child && null !== child)
           {
-            yield * this.#treeRecursion(child, prefix, borders, ansi, isLast ? undefined : false)
+            yield * this.#treeRecursion(child, prefix, branch, borders, ansi, isLast ? undefined : false)
           }
           else
           {
@@ -1027,7 +1043,7 @@ export default class Log
           && null !== nested)
           {
             yield ansi(prefix + branch) + ' ' + String(key)
-            yield * this.#treeRecursion(nested, prefix + nextPrefix, borders, ansi)
+            yield * this.#treeRecursion(nested, prefix + nextPrefix, branch, borders, ansi)
           }
           else
           {
@@ -1040,7 +1056,20 @@ export default class Log
       }
       default:
       {
-        yield ansi(prefix) + ' ' + String(children)
+        const inspected = this.#inspect(children, this.config.ansi, false)
+
+        prefix += branch + ' '
+
+        const indentation = Array(prefix.length).fill(' ')
+
+        if(branch[0] === borders.teeLeft
+        || branch[0] === borders.teeUp)
+        {
+          indentation[prefix.length - branch.length - 1] = borders.vertical
+        }
+
+        const pre = ansi(prefix)
+        yield pre + inspected.split(this.config.EOL).join(this.config.EOL + ansi(indentation.join('')))
       }
     }
   }
