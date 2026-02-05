@@ -1,13 +1,13 @@
-import { EOL }    from 'node:os'
-import Emitter    from 'node:events'
-import util       from 'node:util'
-import ansi       from '@superhero/log/ansi'
-import border     from '@superhero/log/border'
-import filter     from '@superhero/log/filter'
-import hex2rgb    from '@superhero/log/hex2rgb'
-import kaomoji    from '@superhero/log/kaomoji'
-import symbol     from '@superhero/log/symbol'
-import transform  from '@superhero/log/transform'
+import { EOL }      from 'node:os'
+import EventEmitter from 'node:events'
+import util         from 'node:util'
+import ansi         from '@superhero/log/ansi'
+import border       from '@superhero/log/border'
+import filter       from '@superhero/log/filter'
+import hex2rgb      from '@superhero/log/hex2rgb'
+import kaomoji      from '@superhero/log/kaomoji'
+import symbol       from '@superhero/log/symbol'
+import transform    from '@superhero/log/transform'
 
 export default class Log
 {
@@ -18,7 +18,7 @@ export default class Log
    * @example Log.on('warn', (config, ...args) => ...
    * @example Log.on('fail', (config, ...args) => ...
    */
-  static #emitter           = new Emitter()
+  static #emitter           = new EventEmitter()
   static on                 = Reflect.get(Log.#emitter, 'on')
   static off                = Reflect.get(Log.#emitter, 'off')
   static emit               = Reflect.get(Log.#emitter, 'emit')
@@ -40,30 +40,31 @@ export default class Log
    */
   static #config =
   {
-    inline    : false,
-    mute      : false,
-    muteInfo  : false,
-    muteWarn  : false,
-    muteFail  : false,
-    returns   : false,
-    filter    : false,
-    transform : false,
-    tree      : false,
-    table     : false,
-    ansi      : true,
-    reset     : true,
-    staticLog : true,
-    outstream : process.stdout, 
-    errstream : process.stderr,
-    EOL       : EOL,
-    border    : 'light',
-    label     : '[LOG]',
-    divider   : ' ⇢ ',
-    ansiLabel : 'dim bright-black',
-    ansiText  : 'dim',
-    ansiValue : 'bright-cyan',
-    ansiTable : 'dim bright-yellow',
-    ansiTree  : 'dim bright-black'
+    inline          : false,
+    mute            : false,
+    muteInfo        : false,
+    muteWarn        : false,
+    muteFail        : false,
+    returns         : false,
+    filter          : false,
+    transform       : false,
+    tree            : false,
+    table           : false,
+    staticLog       : false,
+    timestampLabel  : false,
+    ansi            : true,
+    reset           : true,
+    outstream       : process.stdout, 
+    errstream       : process.stderr,
+    EOL             : EOL,
+    border          : 'light',
+    label           : '[LOG]',
+    divider         : ' ⇢ ',
+    ansiLabel       : 'dim bright-black',
+    ansiText        : 'dim',
+    ansiValue       : 'bright-cyan',
+    ansiTable       : 'dim bright-yellow',
+    ansiTree        : 'dim bright-black'
   }
 
   /**
@@ -110,13 +111,14 @@ export default class Log
 
   constructor(config)
   {
-    config = new Proxy(Object.assign({ emitter:new Emitter }, config),
+    config = new Proxy(config,
     {
-      get: (target, key) => target[key] ?? Log.config[key]
+      get: (target, key, receiver) => Reflect.get(target, key, receiver) ?? Log.config[key]
     })
 
-    Object.defineProperty(this, 'config',  { value: config })
-    Object.defineProperty(this, 'emitter', { value: Reflect.get(config, 'emitter') })
+    Object.defineProperty(this,   'config',  { value: config })
+    Object.defineProperty(this,   'emitter', { value: config.emitter ?? new EventEmitter(), writable:true, configurable:true })
+    Object.defineProperty(config, 'emitter', { set: emitter => this.emitter = emitter })
 
     // Inline configuration alias for EOL = ''
     this.inline = config.inline
@@ -126,13 +128,18 @@ export default class Log
     if(config.warn) this.set.warn = config.warn
     if(config.fail) this.set.fail = config.fail
 
+    // By defining a getter for the label property, 
+    // ..it's possible to use a dynamic label that updates on each log event, 
+    // ..such as a timestamp.
+    if(config.timestampLabel) Object.defineProperty(config, 'label', { get: () => new Date().toLocaleString() })
+
     // Makes it possible for dependent code to hook into when a log event is 
     // emitted by any of the log instances...
-    if(config.emitter && config.staticLog)
+    if(this.emitter && config.staticLog)
     {
-      this.config.emitter.on('info', (...args) => Log.emit('info', config, ...args))
-      this.config.emitter.on('warn', (...args) => Log.emit('warn', config, ...args))
-      this.config.emitter.on('fail', (...args) => Log.emit('fail', config, ...args))
+      this.emitter.on('info', (...args) => Log.emit('info', config, ...args))
+      this.emitter.on('warn', (...args) => Log.emit('warn', config, ...args))
+      this.emitter.on('fail', (...args) => Log.emit('fail', config, ...args))
     }
   }
 
@@ -142,7 +149,7 @@ export default class Log
    */
   on(event, listener)
   {
-    this.config.emitter?.on(event, listener)
+    this.emitter?.on(event, listener)
     return this
   }
 
@@ -777,7 +784,7 @@ export default class Log
   info(...args)
   {
     this.config.muteInfo || this.#write(this.config.outstream, this.#format(...args))
-    this.config.emitter?.emit('info', ...args)
+    this.emitter?.emit('info', ...args)
     if(this.config.returns) return this.#normal(...args)
   }
 
@@ -790,7 +797,7 @@ export default class Log
   warn(...args)
   {
     this.config.muteWarn || this.#write(this.config.outstream, this.#format(...args))
-    this.config.emitter?.emit('warn', ...args)
+    this.emitter?.emit('warn', ...args)
     if(this.config.returns) return this.#normal(...args)
   }
 
@@ -802,7 +809,7 @@ export default class Log
   fail(...args)
   {
     this.config.muteFail || this.#write(this.config.errstream, this.#format(...args))
-    this.config.emitter?.emit('fail', ...args)
+    this.emitter?.emit('fail', ...args)
     if(this.config.returns) return this.#normal(...args)
   }
 

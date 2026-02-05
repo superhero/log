@@ -252,9 +252,9 @@ suite('@superhero/log', () =>
     {
       // config.mute = true to prevent console output for this test.
       const
-        log1 = new Log({ mute: true }),
-        log2 = new Log({ mute: true }),
-        log3 = new Log({ mute: true })
+        log1 = new Log({ mute: true, staticLog: true }),
+        log2 = new Log({ mute: true, staticLog: true }),
+        log3 = new Log({ mute: true, staticLog: true })
   
       let count = 0
   

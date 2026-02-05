@@ -170,7 +170,7 @@ It's possible to listen to one or both of the event emitters to extend the expec
 ```javascript
 import Log from '@superhero/log'
 
-const log = new Log({ label: '[MyApp]', mute: true })
+const log = new Log({ label: '[MyApp]', mute: true, staticLog: true })
 
 // Instance Observability
 log.on('fail', (config, ...args) => 
@@ -195,31 +195,32 @@ log.fail`Fail message with error: ${new Error()}`
 
 ## Configuration
 
-| Property        | Type    | Default    | Description                                            |
-|-----------------|---------|------------|--------------------------------------------------------|
-| `label`         | String  | `[LOG]`    | Prefix for all log messages.                           |
-| `divider`       | String  | ` ⇢ `      | Divider between label and message.                     |
-| `mute`          | Boolean | `false`    | Mute all log types.                                    |
-| `muteInfo`      | Boolean | `false`    | Mute only `info` logs.                                 |
-| `muteWarn`      | Boolean | `false`    | Mute only `warn` logs.                                 |
-| `muteFail`      | Boolean | `false`    | Mute only `fail` logs.                                 |
-| `transform`     | Boolean | `false`    | Transform the text to unicode styled                   |
-| `inline`        | Boolean | `false`    | Should the log message append EOL                      |
-| `returns`       | Boolean | `false`    | Returns the unformatted message if true                |
-| `table`         | Boolean | `false`    | Structures arguemnts as a table structure, if possible |
-| `tree`          | Boolean | `false`    | Structures arguemnts as a tree structure               |
-| `ansi`          | Boolean | `true`     | Format using using ANSI escpape codes                  |
-| `reset`         | Boolean | `true`     | Reset when using ANSI                                  |
-| `staticLog`     | Boolean | `true`     | Ability to disable static log propagation              |
-| `outstream`     | Stream  | `stdout`   | Output stream                                          |
-| `errstream`     | Stream  | `stderr`   | Error stream                                           |
-| `EOL`           | String  | `os`.`EOL` | New line, or other end of line (EOL) character         |
-| `border`        | String  | `light`    | Border type to use when rendering borders              |
-| `ansiLabel`     | String  |            | ANSI escape codes to format the label                  |
-| `ansiText`      | String  |            | ANSI escape codes to format the text                   |
-| `ansiValue`     | String  |            | ANSI escape codes to format the value                  |
-| `ansiTable`     | String  |            | ANSI escape codes to format the table borders          |
-| `ansiTree`      | String  |            | ANSI escape codes to format the tree borders           |
+| Property         | Type    | Default    | Description                                            |
+|------------------|---------|------------|--------------------------------------------------------|
+| `label`          | String  | `[LOG]`    | Prefix for all log messages.                           |
+| `divider`        | String  | ` ⇢ `      | Divider between label and message.                     |
+| `mute`           | Boolean | `false`    | Mute all log types.                                    |
+| `muteInfo`       | Boolean | `false`    | Mute only `info` logs.                                 |
+| `muteWarn`       | Boolean | `false`    | Mute only `warn` logs.                                 |
+| `muteFail`       | Boolean | `false`    | Mute only `fail` logs.                                 |
+| `transform`      | Boolean | `false`    | Transform the text to unicode styled                   |
+| `inline`         | Boolean | `false`    | Should the log message append EOL                      |
+| `returns`        | Boolean | `false`    | Returns the unformatted message if true                |
+| `table`          | Boolean | `false`    | Structures arguemnts as a table structure, if possible |
+| `tree`           | Boolean | `false`    | Structures arguemnts as a tree structure               |
+| `staticLog`      | Boolean | `false`    | Ability to enable/disable static log propagation       |
+| `timestampLabel` | Boolean | `false`    | Defines a dynamic label of a local timestamp           |
+| `ansi`           | Boolean | `true`     | Format using using ANSI escpape codes                  |
+| `reset`          | Boolean | `true`     | Reset when using ANSI                                  |
+| `outstream`      | Stream  | `stdout`   | Output stream                                          |
+| `errstream`      | Stream  | `stderr`   | Error stream                                           |
+| `EOL`            | String  | `os`.`EOL` | New line, or other end of line (EOL) character         |
+| `border`         | String  | `light`    | Border type to use when rendering borders              |
+| `ansiLabel`      | String  |            | ANSI escape codes to format the label                  |
+| `ansiText`       | String  |            | ANSI escape codes to format the text                   |
+| `ansiValue`      | String  |            | ANSI escape codes to format the value                  |
+| `ansiTable`      | String  |            | ANSI escape codes to format the table borders          |
+| `ansiTree`       | String  |            | ANSI escape codes to format the tree borders           |
 
 ## Tests
 
