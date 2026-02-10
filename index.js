@@ -959,15 +959,18 @@ export default class Log
   tree(tree)
   {
     const 
-      borders     = Log.border[this.config.border] ?? Log.border.light,
-      useAnsi     = this.config.ansi && this.config.ansiTree,
-      ansiFormat  = useAnsi && this.ansi(this.config.ansiTree),
-      ansiReset   = useAnsi && this.ansi('reset'),
-      ansi        = useAnsi
-                    ? str => ansiFormat + str + ansiReset
-                    : str => str
+      border          = Log.border[this.config.border] ?? Log.border.light,
+      ansiReset       = this.config.ansi && this.ansi('reset'),
+      ansiTreeFormat  = this.config.ansi && this.config.ansiTree && this.ansi(this.config.ansiTree),
+      ansiBorder      = ansiTreeFormat
+                        ? s => ansiTreeFormat + s + ansiReset
+                        : s => s,
+      ansiValueFormat = this.config.ansi && this.config.ansiValue && this.ansi(this.config.ansiValue),
+      ansiValue       = ansiValueFormat
+                        ? s => ansiValueFormat + s + ansiReset
+                        : s => s
 
-    return new TreeRenderer(borders, this.config.EOL, ansi).render(tree)
+    return new TreeRenderer(this.config.EOL, border, ansiBorder, ansiValue).render(tree)
   }
 
   /**

@@ -744,15 +744,15 @@ suite('@superhero/log', () =>
           'done'
         ]),
         '├─ hello\n' +
-          '├──┬─ foo   : 1\n' +
-          '│  └─ foobar: 2\n' +
+          '├──┬─ foo    : 1\n' +
+          '│  └─ foobar : 2\n' +
           '├─ world\n' +
           '├──── bar:\n' +
           '│     ├─ baz: x\n' +
           '│     └─ list:\n' +
           '│        ├─ p\n' +
-          '│        ├──┬─ a : 10\n' +
-          '│        │  └─ bb: 11\n' +
+          '│        ├──┬─ a  : 10\n' +
+          '│        │  └─ bb : 11\n' +
           '│        └─ q\n' +
           '├─ zap: 3\n' +
           '└─ done'
@@ -768,14 +768,14 @@ suite('@superhero/log', () =>
           zap: 3
         }),
         '├─ foo: 1\n' +
-          '├─ bar:\n' +
-          '│  ├─ baz: x\n' +
-          '│  └─ list:\n' +
-          '│     ├─ p\n' +
-          '│     ├──┬─ a : 10\n' +
-          '│     │  └─ bb: 11\n' +
-          '│     └─ q\n' +
-          '└─ zap: 3'
+        '├─ bar:\n' +
+        '│  ├─ baz: x\n' +
+        '│  └─ list:\n' +
+        '│     ├─ p\n' +
+        '│     ├──┬─ a  : 10\n' +
+        '│     │  └─ bb : 11\n' +
+        '│     └─ q\n' +
+        '└─ zap: 3'
       )
 
       assert.equal(
@@ -804,13 +804,13 @@ suite('@superhero/log', () =>
         '│  │  ├─ x: 9\n' +
         '│  │  ├─ yy: 10\n' +
         '│  │  └─ deep:\n' +
-        '│  │     ├─ a : A\n' +
-        '│  │     └─ bb: B\n' +
+        '│  │     ├─ a  : A\n' +
+        '│  │     └─ bb : B\n' +
         '│  └─ baz: 2\n' +
         '├──── list:\n' +
-        '│     ├──┬─ a  : 1\n' +
-        '│     │  ├─ bb : 2\n' +
-        '│     │  └─ ccc: 3\n' +
+        '│     ├──┬─ a   : 1\n' +
+        '│     │  ├─ bb  : 2\n' +
+        '│     │  └─ ccc : 3\n' +
         '│     └─ end\n' +
         '└─ done'
       )
@@ -844,8 +844,8 @@ suite('@superhero/log', () =>
 
       assert.equal(
         treeMixed({ a: [], bb: [] }),
-        '├─ a : []\n' +
-        '└─ bb: []'
+        '├─ a  : []\n' +
+        '└─ bb : []'
       )
 
       const cyc = {}
@@ -904,8 +904,8 @@ suite('@superhero/log', () =>
       assert.equal(
         tree, 
         '├─ foo\n'
-      + '└──┬─ bar: baar\n'
-      + '   └─ baz: baaz',
+      + '└──┬─ bar : baar\n'
+      + '   └─ baz : baaz',
         'Expected a nested tree structure')
     })
 
@@ -915,8 +915,8 @@ suite('@superhero/log', () =>
       assert.equal(
         tree, 
         '├─ foo\n'
-      + '├──┬─ bar: baar\n'
-      + '│  └─ baz: baaz\n'
+      + '├──┬─ bar : baar\n'
+      + '│  └─ baz : baaz\n'
       + '└─ qux',
         'Expected a nested tree structure')
     })
@@ -965,13 +965,13 @@ suite('@superhero/log', () =>
       assert.equal(
         tree, 
         '├─ 1:\n'
-      + '│  ├─ a: 3\n'
-      + '│  ├─ b: 4\n'
-      + '│  └─ c: 5\n'
+      + '│  ├─ a : 3\n'
+      + '│  ├─ b : 4\n'
+      + '│  └─ c : 5\n'
       + '├─ 2:\n'
-      + '│  ├─ d: 6\n'
-      + '│  ├─ e: 7\n'
-      + '│  └─ f: 8\n'
+      + '│  ├─ d : 6\n'
+      + '│  ├─ e : 7\n'
+      + '│  └─ f : 8\n'
       + '├─ foo:\n'
       + '│  └─ bar: baz\n'
       + '└─ qux: ...', 
@@ -1067,15 +1067,15 @@ suite('@superhero/log', () =>
 
     test('Can log a tree structure with ANSI formatting', () =>
     {
-      log.use({ ansi:true, tree:true }).info`foobar:${{ foo:'bar', baz:[ 1, 2, 3 ] }}`
+      log.use({ ansi:true, tree:true, ansiValue:'green' }).info`foobar:${{ foo:'bar', baz:[ 1, 2, 3 ] }}`
       assert.equal(
         outstream.chunks[0],
         'foobar:\n'
-      + '\x1B[2m\x1B[90m├─ \x1B[0mfoo: bar\n'
+      + '\x1B[2m\x1B[90m├─ \x1B[0mfoo: \x1B[32mbar\x1B[0m\n'
       + '\x1B[2m\x1B[90m└─ \x1B[0mbaz:\n'
-      + '   \x1B[2m\x1B[90m├─ \x1B[0m1\n'
-      + '   \x1B[2m\x1B[90m├─ \x1B[0m2\n'
-      + '   \x1B[2m\x1B[90m└─ \x1B[0m3\n',
+      + '   \x1B[2m\x1B[90m├─ \x1B[0m\x1B[32m1\x1B[0m\n'
+      + '   \x1B[2m\x1B[90m├─ \x1B[0m\x1B[32m2\x1B[0m\n'
+      + '   \x1B[2m\x1B[90m└─ \x1B[0m\x1B[32m3\x1B[0m\n',
         'Expected the log message with a tree structure to be with ANSI formatting')
     })
   })
