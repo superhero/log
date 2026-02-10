@@ -744,6 +744,138 @@ suite('@superhero/log', () =>
         'Expected a simple tree structure')
     })
 
+    test('..................', () =>
+    {
+      const treeMixed = input => log.tree(input)
+
+      assert.equal(
+        treeMixed([
+          'hello',
+          { foo: 1, foobar: 2 },
+          'world',
+          {
+            bar: {
+              baz: 'x',
+              list: ['p', { a: 10, bb: 11 }, 'q']
+            }
+          },
+          { zap: 3 },
+          'done'
+        ]),
+        '├─ hello\n' +
+          '├──┬─ foo   : 1\n' +
+          '│  └─ foobar: 2\n' +
+          '├─ world\n' +
+          '├──── bar:\n' +
+          '│     ├─ baz: x\n' +
+          '│     └─ list:\n' +
+          '│        ├─ p\n' +
+          '│        ├──┬─ a : 10\n' +
+          '│        │  └─ bb: 11\n' +
+          '│        └─ q\n' +
+          '├─ zap: 3\n' +
+          '└─ done'
+      )
+
+      assert.equal(
+        treeMixed({
+          foo: 1,
+          bar: {
+            baz: 'x',
+            list: ['p', { a: 10, bb: 11 }, 'q']
+          },
+          zap: 3
+        }),
+        '├─ foo: 1\n' +
+          '├─ bar:\n' +
+          '│  ├─ baz: x\n' +
+          '│  └─ list:\n' +
+          '│     ├─ p\n' +
+          '│     ├──┬─ a : 10\n' +
+          '│     │  └─ bb: 11\n' +
+          '│     └─ q\n' +
+          '└─ zap: 3'
+      )
+
+      assert.equal(
+        treeMixed([
+          'hello',
+          {
+            foo: 1,
+            bar: {
+              x: 9,
+              yy: 10,
+              deep: { a: 'A', bb: 'B' }
+            },
+            baz: 2
+          },
+          {
+            list: [
+              { a: 1, bb: 2, ccc: 3 },
+              'end'
+            ]
+          },
+          'done'
+        ]),
+        '├─ hello\n' +
+          '├──┬─ foo: 1\n' +
+          '│  ├─ bar:\n' +
+          '│  │  ├─ x: 9\n' +
+          '│  │  ├─ yy: 10\n' +
+          '│  │  └─ deep:\n' +
+          '│  │     ├─ a : A\n' +
+          '│  │     └─ bb: B\n' +
+          '│  └─ baz: 2\n' +
+          '├──── list:\n' +
+          '│     ├──┬─ a  : 1\n' +
+          '│     │  ├─ bb : 2\n' +
+          '│     │  └─ ccc: 3\n' +
+          '│     └─ end\n' +
+          '└─ done'
+      )
+
+      assert.equal(
+        treeMixed([new Map([['a', 1]]), new Set([2, 3])]),
+        '├─ a: 1\n' +
+          '├─ 2\n' +
+          '└─ 3'
+      )
+
+      assert.equal(
+        treeMixed([{}]),
+        '└─ {}'
+      )
+
+      assert.equal(
+        treeMixed([new Map()]),
+        '└─ Map(0)'
+      )
+
+      assert.equal(
+        treeMixed({ a: [] }),
+        '└─ a: []'
+      )
+
+      assert.equal(
+        treeMixed([[]]),
+        '└─ []'
+      )
+
+      assert.equal(
+        treeMixed({ a: [], bb: [] }),
+        '├─ a : []\n' +
+          '└─ bb: []'
+      )
+
+      const cyc = {}
+      cyc.self = cyc
+
+      assert.throws(
+        () => treeMixed(cyc),
+        RangeError
+      )
+    })
+
     test('Can compose a nested array tree structure', () =>
     {
       const tree = log.tree([ 'foo', [ 'bar', 'baz' ] ])
@@ -752,6 +884,40 @@ suite('@superhero/log', () =>
         '├─ foo\n'
       + '└──┬─ bar\n'
       + '   └─ baz', 
+        'Expected a nested tree structure')
+    })
+
+    test('Can compose a nested array and object with a single attribute', () =>
+    {
+      const tree = log.tree([ 'foo', { bar: 'baz' } ])
+
+      assert.equal(
+        tree, 
+        '├─ foo\n'
+      + '└──── bar: baz',
+        'Expected a nested tree structure')
+    })
+
+    test('Can compose a nested array and object with multiple attributes', () =>
+    {
+      const tree = log.tree([ 'foo', { bar: 'baar', baz: 'baaz' } ])
+      assert.equal(
+        tree, 
+        '├─ foo\n'
+      + '└──┬─ bar: baar\n'
+      + '   └─ baz: baaz',
+        'Expected a nested tree structure')
+    })
+
+    test('Can compose a nested array and object with multiple attributes, wrapped between primitive values', () =>
+    {
+      const tree = log.tree([ 'foo', { bar: 'baar', baz: 'baaz' }, 'qux' ])
+      assert.equal(
+        tree, 
+        '├─ foo\n'
+      + '├──┬─ bar: baar\n'
+      + '│  └─ baz: baaz\n'
+      + '└─ qux',
         'Expected a nested tree structure')
     })
 
@@ -779,8 +945,7 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: 'bar' })
       assert.equal(
         tree, 
-        '└─ foo\n'
-      + '   └─ bar', 
+        '└─ foo: bar', 
         'Expected a simple tree structure')
     })
 
@@ -789,9 +954,8 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: { bar: 'baz' } })
       assert.equal(
         tree, 
-        '└─ foo\n'
-      + '   └─ bar\n'
-      + '      └─ baz', 
+        '└─ foo:\n'
+      + '   └─ bar: baz', 
         'Expected a simple tree structure')
     })
 
@@ -800,25 +964,17 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: { bar: 'baz' }, qux: '...', 1: { a:3, b:4, c:5 }, 2: { d:6, e:7, f:8 } })
       assert.equal(
         tree, 
-        '├─ 1\n'
-      + '│  ├─ a\n'
-      + '│  │  └─ 3\n'
-      + '│  ├─ b\n'
-      + '│  │  └─ 4\n'
-      + '│  └─ c\n'
-      + '│     └─ 5\n'
-      + '├─ 2\n'
-      + '│  ├─ d\n'
-      + '│  │  └─ 6\n'
-      + '│  ├─ e\n'
-      + '│  │  └─ 7\n'
-      + '│  └─ f\n'
-      + '│     └─ 8\n'
-      + '├─ foo\n'
-      + '│  └─ bar\n'
-      + '│     └─ baz\n'
-      + '└─ qux\n'
-      + '   └─ ...', 
+        '├─ 1:\n'
+      + '│  ├─ a: 3\n'
+      + '│  ├─ b: 4\n'
+      + '│  └─ c: 5\n'
+      + '├─ 2:\n'
+      + '│  ├─ d: 6\n'
+      + '│  ├─ e: 7\n'
+      + '│  └─ f: 8\n'
+      + '├─ foo:\n'
+      + '│  └─ bar: baz\n'
+      + '└─ qux: ...', 
         'Expected a complicated nested tree structure')
     })
 
@@ -828,8 +984,7 @@ suite('@superhero/log', () =>
       assert.equal(
         tree, 
         '├─ foo\n'
-      + '└─ bar\n'
-      + '   └─ baz', 
+      + '└──── bar: baz', 
         'Expected a mixed array and object tree structure')
     })
 
@@ -838,9 +993,9 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: [ 'bar', 'baz' ] })
       assert.equal(
         tree, 
-        '└─ foo\n'
+        '└─ foo:\n'
       + '   ├─ bar\n'
-      + '   └─ baz', 
+      + '   └─ baz',
         'Expected a mixed object and array tree structure')
     })
 
@@ -850,9 +1005,9 @@ suite('@superhero/log', () =>
       assert.equal(
         tree, 
         '├─ foo\n'
-      + '└─ bar\n'
-      + '   ├─ baz\n'
-      + '   └─ qux', 
+      + '└──── bar:\n'
+      + '      ├─ baz\n'
+      + '      └─ qux', 
         'Expected a mixed array and object tree structure')
     })
 
@@ -861,10 +1016,9 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: [ 'bar', { baz: 'qux' } ] })
       assert.equal(
         tree, 
-        '└─ foo\n'
+        '└─ foo:\n'
       + '   ├─ bar\n'
-      + '   └─ baz\n'
-      + '      └─ qux', 
+      + '   └──── baz: qux', 
         'Expected a mixed object and array tree structure')
     })
 
@@ -874,13 +1028,13 @@ suite('@superhero/log', () =>
       assert.equal(
         tree,
         '├─ foo\n'
-      + '├─ bar\n'
-      + '│  ├─ baz\n'
-      + '│  └─ qux\n'
-      + '└─ n\n'
-      + '   ├─ 1\n'
-      + '   ├─ 2\n'
-      + '   └─ 3',
+      + '└──┬─ bar:\n'
+      + '   │  ├─ baz\n'
+      + '   │  └─ qux\n'
+      + '   └─ n:\n'
+      + '      ├─ 1\n'
+      + '      ├─ 2\n'
+      + '      └─ 3',
         'Expected a complicated mixed array and object tree structure')
     })
 
@@ -889,14 +1043,11 @@ suite('@superhero/log', () =>
       const tree = log.tree({ foo: [ { bar: 'baz' }, { baz: 'qux' }, { qux: '...' } ], qux: [ 1, 2, 3 ] })
       assert.equal(
         tree,
-        '├─ foo\n'
-      + '│  ├─ bar\n'
-      + '│  │  └─ baz\n'
-      + '│  ├─ baz\n'
-      + '│  │  └─ qux\n'
-      + '│  └─ qux\n'
-      + '│     └─ ...\n'
-      + '└─ qux\n'
+        '├─ foo:\n'
+      + '│  ├──── bar: baz\n'
+      + '│  ├──── baz: qux\n'
+      + '│  └──── qux: ...\n'
+      + '└─ qux:\n'
       + '   ├─ 1\n'
       + '   ├─ 2\n'
       + '   └─ 3',
@@ -909,8 +1060,7 @@ suite('@superhero/log', () =>
       assert.equal(
         outstream.chunks[0],
         'foo\n'
-      + '└─ bar\n'
-      + '   └─ baz\n'
+      + '└─ bar: baz\n'
       + 'qux\n',
         'Expected the argument to the template to be logged as a tree structure')
     })
@@ -921,12 +1071,11 @@ suite('@superhero/log', () =>
       assert.equal(
         outstream.chunks[0],
         'foobar:\n'
-      + '\x1B[2m\x1B[90m├─\x1B[0m foo\n'
-      + '\x1B[2m\x1B[90m│  └─\x1B[0m bar\n'
-      + '\x1B[2m\x1B[90m└─\x1B[0m baz\n'
-      + '\x1B[2m\x1B[90m   ├─\x1B[0m 1\n'
-      + '\x1B[2m\x1B[90m   ├─\x1B[0m 2\n'
-      + '\x1B[2m\x1B[90m   └─\x1B[0m 3\n',
+      + '\x1B[2m\x1B[90m├─ \x1B[0mfoo: bar\n'
+      + '\x1B[2m\x1B[90m└─ \x1B[0mbaz:\n'
+      + '   \x1B[2m\x1B[90m├─ \x1B[0m1\n'
+      + '   \x1B[2m\x1B[90m├─ \x1B[0m2\n'
+      + '   \x1B[2m\x1B[90m└─ \x1B[0m3\n',
         'Expected the log message with a tree structure to be with ANSI formatting')
     })
   })

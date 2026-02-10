@@ -8,6 +8,7 @@ import hex2rgb      from '@superhero/log/hex2rgb'
 import kaomoji      from '@superhero/log/kaomoji'
 import symbol       from '@superhero/log/symbol'
 import transform    from '@superhero/log/transform'
+import TreeRenderer from '@superhero/log/tree-renderer'
 
 export default class Log
 {
@@ -950,7 +951,7 @@ export default class Log
   }
 
   /**
-   * Creates a tree structure from the provided nested object/array.
+   * Renders a tree structure from the provided nested object/array.
    * 
    * @param {Object|Array} tree - The object or array to be transformed into a tree structure.
    * @returns {string} The formatted tree structure as a string.
@@ -958,141 +959,15 @@ export default class Log
   tree(tree)
   {
     const 
-      name    = Log.filter.dashCase(this.config.border),
-      borders = Log.border[name] ?? Log.border.light,
-      ansi    = str => this.config.ansi && this.config.ansiTree
-              ? this.ansi(this.config.ansiTree) + str + this.ansi('reset')
-              : str
+      borders     = Log.border[this.config.border] ?? Log.border.light,
+      useAnsi     = this.config.ansi && this.config.ansiTree,
+      ansiFormat  = useAnsi && this.ansi(this.config.ansiTree),
+      ansiReset   = useAnsi && this.ansi('reset'),
+      ansi        = useAnsi
+                    ? str => ansiFormat + str + ansiReset
+                    : str => str
 
-    let output = ''
-    for(const childTree of this.#treeRecursion(tree, '', '', borders, ansi))
-    {
-      output += this.config.EOL + childTree
-    }
-
-    return output.trim()
-  }
-
-  * #treeRecursion(children, prefix, branch, borders, ansi, hasLast)
-  {
-    switch(Object.prototype.toString.call(children))
-    {
-      case '[object Set]':
-      {
-        // Normalizes Set to Array
-        children = Array.from(children)
-        // Fallthrough to 'Array' case...
-      }
-      case '[object Array]':
-      {
-        for(let i = 0; i < children.length; i++)
-        {
-          const
-            child       = children[i],
-            isLast      = i === children.length - 1,
-            branch      = isLast 
-                        ? borders.bottomLeft + borders.horizontal
-                        : borders.teeLeft    + borders.horizontal,
-            nextPrefix  = isLast 
-                        ? '   '
-                        : borders.vertical + '  '
-    
-          if(Array.isArray(child))
-          {
-            if(child.length)
-            {
-              const firstConnect  = child.length > 1 ? borders.teeUp : borders.horizontal
-              const firstPrefix   = prefix + branch + borders.horizontal
-              const firstItem     = [ ...this.#treeRecursion(child[0], firstPrefix, firstConnect + borders.horizontal, borders, ansi) ].join(this.config.EOL)
-              const rest          = child.slice(1)
-              
-              yield firstItem
-
-              if(rest.length)
-              {
-                yield * this.#treeRecursion(child.slice(1), prefix + nextPrefix, branch, borders, ansi)
-              }
-            }
-          }
-          else if('object' === typeof child && null !== child)
-          {
-            yield * this.#treeRecursion(child, prefix, branch, borders, ansi, isLast ? undefined : false)
-          }
-          else
-          {
-            yield ansi(prefix + branch) + ' ' + String(child)
-          }
-        }
-        break
-      }
-      case '[object Map]':
-      {
-        // Normalizes Map to Object
-        children = Object.fromEntries(children.entries())
-        // Fallthrough to 'Object' case...
-      }
-      case '[object Object]':
-      {
-        const entries = Object.entries(children)
-        for(let i = 0; i < entries.length; i++)
-        {
-          const [ key, nested ] = entries[i]
-          const 
-            isLast      = hasLast ?? i === entries.length - 1,
-            branch      = isLast 
-                        ? borders.bottomLeft + borders.horizontal
-                        : borders.teeLeft    + borders.horizontal,
-            nextPrefix  = isLast 
-                        ? '   '
-                        : borders.vertical + '  '
-  
-          if(typeof nested === 'object' 
-          && null !== nested)
-          {
-            yield ansi(prefix + branch) + ' ' + String(key)
-            yield * this.#treeRecursion(nested, prefix + nextPrefix, branch, borders, ansi)
-          }
-          else
-          {
-            yield ansi(prefix + branch) + ' ' + String(key)
-                + '\n' 
-                + ansi(prefix + nextPrefix + borders.bottomLeft + borders.horizontal) + ' ' + String(nested)
-          }
-        }
-        break
-      }
-      default:
-      {
-        let inspected = this.#inspectFallback(children, this.config.ansi)
-
-        // Prevent an added prefix space for a root node
-        if(prefix)
-        {
-          prefix += branch + ' '
-
-          const inspectedLines = inspected.split(this.config.EOL)
-
-          // Format multi line strings to fit the tree structure by adding
-          // the expected indentation on each line.
-          if(inspectedLines.length > 1)
-          {
-            const indentation = Array(prefix.length).fill(' ')
-
-            if(branch[0] === borders.teeLeft
-            || branch[0] === borders.teeUp)
-            {
-              indentation[prefix.length - branch.length - 1] = borders.vertical
-            }
-
-            inspected = inspectedLines.join(this.config.EOL + ansi(indentation.join('')))
-          }
-
-          inspected = ansi(prefix) + inspected
-        }
-
-        yield inspected
-      }
-    }
+    return new TreeRenderer(borders, this.config.EOL, ansi).render(tree)
   }
 
   /**
