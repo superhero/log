@@ -152,13 +152,13 @@ const data =
 log.info`Some random data:\n${data}`
 
 // Some random data:
-// └─ foo
+// └─ foo:
 //    ├─ bar
 //    ├─ baz
-//    └─ qux
-//       ├─ 1
-//       ├─ 2
-//       └─ 3
+//    └──── qux:
+//          ├─ 1
+//          ├─ 2
+//          └─ 3
 ```
 
 ### Observability
@@ -236,266 +236,209 @@ npm test
 ────────────────────────────────── ⋅⋆ Suite ⋆⋅ ─────────────────────────────────
 
 
-@superhero/log
-├─ Simple construction of the Log instance
-│  └─ ✔ passed 2.958742ms
-├─ Info
-│  └─ ✔ passed 0.345249ms
-├─ Warn
-│  └─ ✔ passed 0.442836ms
-├─ Fail
-│  └─ ✔ passed 0.874991ms
-├─ Returns an unformatted string of the log message when configured to return
-│  └─ ✔ passed 1.124585ms
-├─ Mute
-│  ├─ Mute all
-│  │  └─ ✔ passed 0.535226ms
-│  ├─ Mute info
-│  │  └─ ✔ passed 0.278769ms
-│  ├─ Mute warn
-│  │  └─ ✔ passed 0.292808ms
-│  ├─ Mute fail
-│  │  └─ ✔ passed 0.391119ms
-│  └─ ✔ suite passed 1.947096ms
-├─ Observe
-│  ├─ Observe log info
-│  │  └─ ✔ passed 0.406538ms
-│  ├─ Observe log warn
-│  │  └─ ✔ passed 0.29576ms
-│  ├─ Observe log fail
-│  │  └─ ✔ passed 0.31581ms
-│  ├─ Distinguish types in observed log messages
-│  │  └─ ✔ passed 0.707904ms
-│  ├─ Distinguish types in observed global log messages
-│  │  └─ ✔ passed 1.410703ms
-│  └─ ✔ suite passed 3.372947ms
-├─ Filter
-│  ├─ Can filter log messages using camelCase
-│  │  └─ ✔ passed 1.62556ms
-│  ├─ Can filter log messages using capitalize
-│  │  └─ ✔ passed 0.73326ms
-│  ├─ Can filter log messages using dashCase
-│  │  └─ ✔ passed 0.48413ms
-│  ├─ Can filter log messages using dotCase
-│  │  └─ ✔ passed 0.318218ms
-│  ├─ Can filter log messages using leet
-│  │  └─ ✔ passed 0.297713ms
-│  ├─ Can filter log messages using lowerCase
-│  │  └─ ✔ passed 0.242082ms
-│  ├─ Can filter log messages using pathCase
-│  │  └─ ✔ passed 0.239779ms
-│  ├─ Can filter log messages using pipeCase
-│  │  └─ ✔ passed 0.243202ms
-│  ├─ Can filter log messages using randomCase
-│  │  └─ ✔ passed 0.593199ms
-│  ├─ Can filter log messages using reverse
-│  │  └─ ✔ passed 0.336114ms
-│  ├─ Can filter log messages using reverseSentences
-│  │  └─ ✔ passed 0.333202ms
-│  ├─ Can filter log messages using reverseWords
-│  │  └─ ✔ passed 0.236699ms
-│  ├─ Can filter log messages using snakeCase
-│  │  └─ ✔ passed 0.272926ms
-│  ├─ Can filter log messages using spaceCase
-│  │  └─ ✔ passed 0.284911ms
-│  ├─ Can filter log messages using tildeCase
-│  │  └─ ✔ passed 0.229497ms
-│  ├─ Can filter log messages using titleCase
-│  │  └─ ✔ passed 0.410656ms
-│  ├─ Can filter log messages using upperCase
-│  │  └─ ✔ passed 0.235252ms
-│  ├─ Can add and remove filters
-│  │  └─ ✔ passed 0.426326ms
-│  └─ ✔ suite passed 8.41819ms
-├─ Transform
-│  ├─ Can transform a string
-│  │  └─ ✔ passed 2.158252ms
-│  ├─ Can transform a log message string
-│  │  └─ ✔ passed 0.542494ms
-│  ├─ Can use circledFilled to transform a log message
-│  │  └─ ✔ passed 0.668016ms
-│  ├─ Can use squared to transform a log message
-│  │  └─ ✔ passed 0.229625ms
-│  ├─ Can use squaredDashed to transform a log message
-│  │  └─ ✔ passed 0.278039ms
-│  ├─ Can use squaredFilled to transform a log message
-│  │  └─ ✔ passed 0.27945ms
-│  ├─ Can use upsideDown to transform a log message
-│  │  └─ ✔ passed 0.345051ms
-│  ├─ Can use smallCaps to transform a log message
-│  │  └─ ✔ passed 0.288567ms
-│  ├─ Can use smallCaps to transform a log message
-│  │  └─ ✔ passed 0.186975ms
-│  ├─ Can use doubleStruck to transform a log message
-│  │  └─ ✔ passed 0.213308ms
-│  ├─ Can use oldEnglish to transform a log message
-│  │  └─ ✔ passed 0.17581ms
-│  ├─ Can use strongOldEnglish to transform a log message
-│  │  └─ ✔ passed 0.165775ms
-│  ├─ Can use script to transform a log message
-│  │  └─ ✔ passed 0.159728ms
-│  ├─ Can use serif to transform a log message
-│  │  └─ ✔ passed 0.266868ms
-│  ├─ Can use strong to transform a log message
-│  │  └─ ✔ passed 0.394423ms
-│  ├─ Can use fullwidth to transform a log message
-│  │  └─ ✔ passed 0.216826ms
-│  ├─ Can use parenthesized to transform a log message
-│  │  └─ ✔ passed 0.188862ms
-│  └─ ✔ suite passed 7.408358ms
-├─ Colors
-│  ├─ Can define colors using the colors method
-│  │  └─ ✔ passed 1.473162ms
-│  ├─ Can define Palette 8-bit ANSI escape codes using RGB color definition
-│  │  └─ ✔ passed 0.396107ms
-│  ├─ Can define Palette 8-bit ANSI escape codes using RGB background color definition
-│  │  └─ ✔ passed 0.30498ms
-│  ├─ Can define Truecolor ANSI escape codes using RGB color definition
-│  │  └─ ✔ passed 0.457131ms
-│  ├─ Can define Truecolor ANSI escape codes using RGB color definition
-│  │  └─ ✔ passed 0.247131ms
-│  ├─ Can define Truecolor ANSI escape codes using RGB background color definition
-│  │  └─ ✔ passed 0.282039ms
-│  ├─ Can define Truecolor ANSI escape codes using HEX color definition
-│  │  └─ ✔ passed 0.374522ms
-│  ├─ Can define Truecolor ANSI escape codes using HEX background color definition
-│  │  └─ ✔ passed 0.252523ms
-│  ├─ Can define Truecolor ANSI escape codes using 6 character HEX color definition
-│  │  └─ ✔ passed 0.197842ms
-│  ├─ Can define Truecolor ANSI escape codes using 3 character HEX color definition
-│  │  └─ ✔ passed 0.359607ms
-│  ├─ Will use the defined ANSI escape code if provided manually
-│  │  └─ ✔ passed 0.28645ms
-│  └─ ✔ suite passed 5.168959ms
-├─ Can set a specific logger config
-│  └─ ✔ passed 0.341542ms
-├─ Kaomoji
-│  ├─ Can use kaomoji
-│  │  └─ ✔ passed 0.443811ms
-│  ├─ Throws on invalid kaomoji
-│  │  └─ ✔ passed 1.051838ms
-│  ├─ Can use the "smile" kaomoji in log messages
-│  │  └─ ✔ passed 0.245573ms
-│  ├─ Can use the "happy" kaomoji in log messages
-│  │  └─ ✔ passed 0.402689ms
-│  ├─ Can use the "good" kaomoji in log messages
-│  │  └─ ✔ passed 0.386914ms
-│  ├─ Can use the "confused" kaomoji in log messages
-│  │  └─ ✔ passed 0.288576ms
-│  ├─ Can use the "idk" kaomoji in log messages
-│  │  └─ ✔ passed 0.294919ms
-│  ├─ Can use the "sad" kaomoji in log messages
-│  │  └─ ✔ passed 0.485167ms
-│  ├─ Can use the "angry" kaomoji in log messages
-│  │  └─ ✔ passed 0.457755ms
-│  ├─ Can use the "bad" kaomoji in log messages
-│  │  └─ ✔ passed 0.370573ms
-│  ├─ Can use the "corrected" kaomoji in log messages
-│  │  └─ ✔ passed 0.43318ms
-│  └─ ✔ suite passed 5.423189ms
-├─ Tree
-│  ├─ Can compose a simple value
-│  │  └─ ✔ passed 1.133463ms
-│  ├─ Can compose a simple array tree structure
-│  │  └─ ✔ passed 0.277029ms
-│  ├─ Can compose a nested array tree structure
-│  │  └─ ✔ passed 0.269407ms
-│  ├─ Can compose a complicated nested array tree structure
-│  │  └─ ✔ passed 0.485155ms
-│  ├─ Can compose a simple object tree structure
-│  │  └─ ✔ passed 0.231248ms
-│  ├─ Can compose a nested object tree structure
-│  │  └─ ✔ passed 0.18638ms
-│  ├─ Can compose a complicated nested object tree structure
-│  │  └─ ✔ passed 1.398719ms
-│  ├─ Can compose a simple mixed array and object tree structure
-│  │  └─ ✔ passed 0.298856ms
-│  ├─ Can compose a simple mixed object and array tree structure
-│  │  └─ ✔ passed 0.172376ms
-│  ├─ Can compose a nested mixed array and object tree structure
-│  │  └─ ✔ passed 0.362961ms
-│  ├─ Can compose a nested mixed object and array tree structure
-│  │  └─ ✔ passed 0.151924ms
-│  ├─ Can compose a complicated mixed array and object tree structure
-│  │  └─ ✔ passed 0.142644ms
-│  ├─ Can compose a complicated mixed object and array tree structure
-│  │  └─ ✔ passed 0.258007ms
-│  ├─ Can log a tree structure
-│  │  └─ ✔ passed 0.648681ms
-│  ├─ Can log a tree structure with ANSI formatting
-│  │  └─ ✔ passed 0.596197ms
-│  └─ ✔ suite passed 7.312372ms
-├─ Table
-│  ├─ Can format a simple table
-│  │  └─ ✔ passed 1.847446ms
-│  ├─ Can format a simple table using heavy lines
-│  │  └─ ✔ passed 0.34847ms
-│  ├─ Can format a simple table using light and heavy lines
-│  │  └─ ✔ passed 0.472895ms
-│  ├─ Can format a simple table using heavy and light lines
-│  │  └─ ✔ passed 0.234213ms
-│  ├─ Can format a simple table using double lines
-│  │  └─ ✔ passed 0.475763ms
-│  ├─ Can format a simple table using light and double lines
-│  │  └─ ✔ passed 0.193419ms
-│  ├─ Can format a simple table using double and light lines
-│  │  └─ ✔ passed 0.1986ms
-│  ├─ Can format a simple table with ANSI formatting
-│  │  └─ ✔ passed 0.240485ms
-│  ├─ Can format a large table
-│  │  └─ ✔ passed 0.30641ms
-│  ├─ Can format a complex table
-│  │  └─ ✔ passed 0.703804ms
-│  ├─ Can log using enabled table
-│  │  └─ ✔ passed 0.276914ms
-│  ├─ Can log a nested table using enabled table
-│  │  └─ ✔ passed 0.449158ms
-│  └─ ✔ suite passed 6.209447ms
-└─ ✔ suite passed 53.328736ms
+@superhero/log 
+├─ Simple construction of the Log instance ✔ 4.107ms
+├─ Info ✔ 0.570ms
+├─ Warn ✔ 0.398ms
+├─ Fail ✔ 0.388ms
+├─ Returns an unformatted string of the log message when configured to return ✔ 0.870ms
+├─ Mute 
+│  ├─ Mute all ✔ 0.524ms
+│  ├─ Mute info ✔ 0.313ms
+│  ├─ Mute warn ✔ 0.321ms
+│  ├─ Mute fail ✔ 0.331ms
+│  └─ ✔ 1.848ms
+├─ Observe 
+│  ├─ Observe log info ✔ 0.976ms
+│  ├─ Observe log warn ✔ 0.397ms
+│  ├─ Observe log fail ✔ 0.353ms
+│  ├─ Distinguish types in observed log messages ✔ 0.909ms
+│  ├─ Distinguish types in observed global log messages ✔ 1.694ms
+│  └─ ✔ 4.685ms
+├─ Filter 
+│  ├─ Can filter log messages using camelCase ✔ 1.173ms
+│  ├─ Can filter log messages using capitalize ✔ 0.673ms
+│  ├─ Can filter log messages using dashCase ✔ 1.947ms
+│  ├─ Can filter log messages using dotCase ✔ 0.459ms
+│  ├─ Can filter log messages using leet ✔ 0.676ms
+│  ├─ Can filter log messages using lowerCase ✔ 0.389ms
+│  ├─ Can filter log messages using pathCase ✔ 0.307ms
+│  ├─ Can filter log messages using pipeCase ✔ 0.266ms
+│  ├─ Can filter log messages using randomCase ✔ 0.373ms
+│  ├─ Can filter log messages using reverse ✔ 0.402ms
+│  ├─ Can filter log messages using reverseSentences ✔ 0.529ms
+│  ├─ Can filter log messages using reverseWords ✔ 0.578ms
+│  ├─ Can filter log messages using snakeCase ✔ 0.365ms
+│  ├─ Can filter log messages using spaceCase ✔ 0.307ms
+│  ├─ Can filter log messages using tildeCase ✔ 0.345ms
+│  ├─ Can filter log messages using titleCase ✔ 0.485ms
+│  ├─ Can filter log messages using upperCase ✔ 0.466ms
+│  ├─ Can add and remove filters ✔ 0.571ms
+│  └─ ✔ 11.305ms
+├─ Transform 
+│  ├─ Can transform a string ✔ 0.534ms
+│  ├─ Can transform a log message string ✔ 0.467ms
+│  ├─ Can use circledFilled to transform a log message ✔ 0.406ms
+│  ├─ Can use squared to transform a log message ✔ 0.295ms
+│  ├─ Can use squaredDashed to transform a log message ✔ 0.671ms
+│  ├─ Can use squaredFilled to transform a log message ✔ 0.456ms
+│  ├─ Can use upsideDown to transform a log message ✔ 0.289ms
+│  ├─ Can use smallCaps to transform a log message ✔ 0.325ms
+│  ├─ Can use smallCaps to transform a log message ✔ 0.253ms
+│  ├─ Can use doubleStruck to transform a log message ✔ 0.332ms
+│  ├─ Can use oldEnglish to transform a log message ✔ 0.587ms
+│  ├─ Can use strongOldEnglish to transform a log message ✔ 0.472ms
+│  ├─ Can use script to transform a log message ✔ 0.287ms
+│  ├─ Can use serif to transform a log message ✔ 0.470ms
+│  ├─ Can use strong to transform a log message ✔ 0.437ms
+│  ├─ Can use fullwidth to transform a log message ✔ 2.144ms
+│  ├─ Can use parenthesized to transform a log message ✔ 0.264ms
+│  └─ ✔ 9.702ms
+├─ Colors 
+│  ├─ Can define colors using the colors method ✔ 1.333ms
+│  ├─ Can define Palette 8-bit ANSI escape codes using RGB color definition ✔ 0.433ms
+│  ├─ Can define Palette 8-bit ANSI escape codes using RGB background color definition ✔ 0.427ms
+│  ├─ Can define Truecolor ANSI escape codes using RGB color definition ✔ 0.277ms
+│  ├─ Can define Truecolor ANSI escape codes using RGB color definition ✔ 0.229ms
+│  ├─ Can define Truecolor ANSI escape codes using RGB background color definition ✔ 0.377ms
+│  ├─ Can define Truecolor ANSI escape codes using HEX color definition ✔ 0.579ms
+│  ├─ Can define Truecolor ANSI escape codes using HEX background color definition ✔ 0.729ms
+│  ├─ Can define Truecolor ANSI escape codes using 6 character HEX color definition ✔ 0.347ms
+│  ├─ Can define Truecolor ANSI escape codes using 3 character HEX color definition ✔ 0.453ms
+│  ├─ Will use the defined ANSI escape code if provided manually ✔ 0.309ms
+│  └─ ✔ 6.204ms
+├─ Can set a specific logger config ✔ 0.412ms
+├─ Kaomoji 
+│  ├─ Can use kaomoji ✔ 0.673ms
+│  ├─ Throws on invalid kaomoji ✔ 1.194ms
+│  ├─ Can use the "smile" kaomoji in log messages ✔ 0.252ms
+│  ├─ Can use the "happy" kaomoji in log messages ✔ 0.286ms
+│  ├─ Can use the "good" kaomoji in log messages ✔ 0.735ms
+│  ├─ Can use the "confused" kaomoji in log messages ✔ 0.421ms
+│  ├─ Can use the "idk" kaomoji in log messages ✔ 0.250ms
+│  ├─ Can use the "sad" kaomoji in log messages ✔ 0.216ms
+│  ├─ Can use the "angry" kaomoji in log messages ✔ 0.227ms
+│  ├─ Can use the "bad" kaomoji in log messages ✔ 0.249ms
+│  ├─ Can use the "corrected" kaomoji in log messages ✔ 0.314ms
+│  └─ ✔ 5.349ms
+├─ Symbol 
+│  ├─ Can use status symbols as label ✔ 0.799ms
+│  ├─ Can use yes/no symbols in log messages ✔ 0.494ms
+│  ├─ Can use time symbol in log messages ✔ 0.379ms
+│  ├─ Can use love symbol in log messages ✔ 0.314ms
+│  ├─ Can use dead symbol in log messages ✔ 0.302ms
+│  └─ ✔ 2.715ms
+├─ Tree 
+│  ├─ Different sporadic tests ✔ 2.870ms
+│  ├─ Can compose a simple value ✔ 0.295ms
+│  ├─ Can compose a simple array tree structure ✔ 0.366ms
+│  ├─ Can compose a nested array tree structure ✔ 0.423ms
+│  ├─ Can compose a nested array and object with a single attribute ✔ 0.202ms
+│  ├─ Can compose a nested array and object with multiple attributes ✔ 0.271ms
+│  ├─ Can compose a nested array and object with multiple attributes, wrapped between primitive values ✔ 0.305ms
+│  ├─ Can compose a complicated nested array tree structure ✔ 0.227ms
+│  ├─ Can compose a simple object tree structure ✔ 0.188ms
+│  ├─ Can compose a nested object tree structure ✔ 1.957ms
+│  ├─ Can compose a complicated nested object tree structure ✔ 0.356ms
+│  ├─ Can compose a simple mixed array and object tree structure ✔ 0.446ms
+│  ├─ Can compose a simple mixed object and array tree structure ✔ 0.182ms
+│  ├─ Can compose a nested mixed array and object tree structure ✔ 0.189ms
+│  ├─ Can compose a nested mixed object and array tree structure ✔ 0.180ms
+│  ├─ Can compose a complicated mixed array and object tree structure ✔ 0.360ms
+│  ├─ Can compose a complicated mixed object and array tree structure ✔ 0.228ms
+│  ├─ Can log a tree structure ✔ 0.258ms
+│  ├─ Can log a tree structure with ANSI formatting ✔ 0.290ms
+│  └─ ✔ 10.398ms
+├─ Table 
+│  ├─ Can format a simple table ✔ 1.896ms
+│  ├─ Can format a simple table using heavy lines ✔ 0.365ms
+│  ├─ Can format a simple table using light and heavy lines ✔ 0.473ms
+│  ├─ Can format a simple table using heavy and light lines ✔ 0.331ms
+│  ├─ Can format a simple table using double lines ✔ 0.308ms
+│  ├─ Can format a simple table using light and double lines ✔ 0.243ms
+│  ├─ Can format a simple table using double and light lines ✔ 0.233ms
+│  ├─ Can format a simple table using dashed lines ✔ 0.229ms
+│  ├─ Can format a simple table using dashed heavy lines ✔ 0.224ms
+│  ├─ Can format a simple table using dotted lines ✔ 0.385ms
+│  ├─ Can format a simple table using rounded lines ✔ 0.269ms
+│  ├─ Can format a simple table using rounded and dashed lines ✔ 0.245ms
+│  ├─ Can format a simple list-table using light lines ✔ 0.233ms
+│  ├─ Can format a simple list-table using heavy lines ✔ 0.230ms
+│  ├─ Can format a simple list-table using double lines ✔ 0.214ms
+│  ├─ Can format a simple list-table using dashed lines ✔ 0.223ms
+│  ├─ Can format a simple list-table using heavy dashed lines ✔ 0.226ms
+│  ├─ Can format a simple list-table using dotted lines ✔ 0.224ms
+│  ├─ Can format a simple list-table using dotted lines ✔ 0.221ms
+│  ├─ Can format a simple list-table using dotted lines ✔ 0.455ms
+│  ├─ Can format a simple table using diamond frame ✔ 0.262ms
+│  ├─ Can format a simple table using simple out-lines ✔ 0.245ms
+│  ├─ Can format a simple table using no lines ✔ 0.226ms
+│  ├─ Can format a simple table with ANSI formatting ✔ 0.321ms
+│  ├─ Can format a large table ✔ 0.430ms
+│  ├─ Can format a complex table ✔ 0.840ms
+│  ├─ Can log using enabled table ✔ 0.393ms
+│  ├─ Can log a nested table using enabled table ✔ 0.439ms
+│  ├─ Can log a mapped flat object as a table ✔ 0.385ms
+│  ├─ Can log a nested mapped flat object as a nested table ✔ 0.350ms
+│  └─ ✔ 12.231ms
+└─ ✔ 74.029ms
 
 
-─────────────────────────────────── ⋅⋆ Coverage ⋆⋅ ───────────────────────────────────
+─────────────────────────────────────────── ⋅⋆ Coverage ⋆⋅ ───────────────────────────────────────────
 
 
-Files                                                  Coverage   Branches   Functions
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-index.js                                                    95%        89%        100%
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-index.test.js                                              100%       100%        100%
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-lib/ansi.js                                                100%       100%        100%
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-lib/border.js                                              100%       100%        100%
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-lib/filter.js                                              100%        96%         95%
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-lib/hex2rgb.js                                              76%        71%        100%
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-lib/kaomoji.js                                             100%       100%        100%
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-lib/symbol.js                                              100%       100%        100%
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-lib/transform.js                                           100%       100%        100%
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Total                                                       98%        93%         99%
+Files                                                                  Coverage   Functions   Branches
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+index.js                                                                    94%         95%        88%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/ansi.js                                                                100%        100%       100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/border.js                                                              100%        100%       100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/filter.js                                                              100%         95%        96%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/hex2rgb.js                                                              76%        100%        71%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/kaomoji.js                                                             100%        100%       100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/symbol.js                                                              100%        100%       100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/transform.js                                                           100%        100%       100%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+lib/tree-renderer.js                                                        89%         96%        83%
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Total                                                                       94%        86%         95%
 
 
-──────────────────────────────────── ⋅⋆ Summary ⋆⋅ ───────────────────────────────────
+─────────────────────────────────────────── ⋅⋆ Uncovered ⋆⋅ ──────────────────────────────────────────
 
 
-Suites                                                                               9
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Tests                                                                               99
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Passed                                                                              99
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Failed                                                                               0
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Cancelled                                                                            0
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Skipped                                                                              0
-╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-Todo                                                                                 0
+─ index.js
+  [85-100], [233-234], [238-241], [254-257], [266-269], [287-290], [321-326], [337-338], [596-598]
+  [610-612], [821-823], [990-991], [995-998], [1004-1007], [1019-1022]
+─ lib/hex2rgb.js
+  [14-17], [34-38]
+─ lib/tree-renderer.js
+  [26-28], [52-54], [104-105], [108-109], [164-165], [179-191], [219-220], [294-295], [333-335]
+  [394-395], [404-406], [430-439], [459-461], [492-493], [498-501], [540-541]
+
+
+──────────────────────────────────────────── ⋅⋆ Summary ⋆⋅ ───────────────────────────────────────────
+
+
+Suites                                                                                              10
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Tests                                                                                              126
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Passed                                                                                             126
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Failed                                                                                               0
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Cancelled                                                                                            0
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Skipped                                                                                              0
+╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+Todo                                                                                                 0
 ```
 
 ## License

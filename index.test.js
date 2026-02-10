@@ -725,26 +725,7 @@ suite('@superhero/log', () =>
 
   suite('Tree', () =>
   {
-    test('Can compose a simple value', () =>
-    {
-      const tree = log.tree('foo')
-      assert.equal(
-        tree, 
-        'foo', 
-        'Expected a simple value "foo"')
-    })
-
-    test('Can compose a simple array tree structure', () =>
-    {
-      const tree = log.tree([ 'foo', 'bar' ])
-      assert.equal(
-        tree, 
-        '├─ foo\n'
-      + '└─ bar', 
-        'Expected a simple tree structure')
-    })
-
-    test('..................', () =>
+    test('Different sporadic tests', () =>
     {
       const treeMixed = input => log.tree(input)
 
@@ -818,27 +799,27 @@ suite('@superhero/log', () =>
           'done'
         ]),
         '├─ hello\n' +
-          '├──┬─ foo: 1\n' +
-          '│  ├─ bar:\n' +
-          '│  │  ├─ x: 9\n' +
-          '│  │  ├─ yy: 10\n' +
-          '│  │  └─ deep:\n' +
-          '│  │     ├─ a : A\n' +
-          '│  │     └─ bb: B\n' +
-          '│  └─ baz: 2\n' +
-          '├──── list:\n' +
-          '│     ├──┬─ a  : 1\n' +
-          '│     │  ├─ bb : 2\n' +
-          '│     │  └─ ccc: 3\n' +
-          '│     └─ end\n' +
-          '└─ done'
+        '├──┬─ foo: 1\n' +
+        '│  ├─ bar:\n' +
+        '│  │  ├─ x: 9\n' +
+        '│  │  ├─ yy: 10\n' +
+        '│  │  └─ deep:\n' +
+        '│  │     ├─ a : A\n' +
+        '│  │     └─ bb: B\n' +
+        '│  └─ baz: 2\n' +
+        '├──── list:\n' +
+        '│     ├──┬─ a  : 1\n' +
+        '│     │  ├─ bb : 2\n' +
+        '│     │  └─ ccc: 3\n' +
+        '│     └─ end\n' +
+        '└─ done'
       )
 
       assert.equal(
         treeMixed([new Map([['a', 1]]), new Set([2, 3])]),
         '├─ a: 1\n' +
-          '├─ 2\n' +
-          '└─ 3'
+        '├─ 2\n' +
+        '└─ 3'
       )
 
       assert.equal(
@@ -864,7 +845,7 @@ suite('@superhero/log', () =>
       assert.equal(
         treeMixed({ a: [], bb: [] }),
         '├─ a : []\n' +
-          '└─ bb: []'
+        '└─ bb: []'
       )
 
       const cyc = {}
@@ -874,6 +855,25 @@ suite('@superhero/log', () =>
         () => treeMixed(cyc),
         RangeError
       )
+    })
+
+    test('Can compose a simple value', () =>
+    {
+      const tree = log.tree('foo')
+      assert.equal(
+        tree, 
+        'foo', 
+        'Expected a simple value "foo"')
+    })
+
+    test('Can compose a simple array tree structure', () =>
+    {
+      const tree = log.tree([ 'foo', 'bar' ])
+      assert.equal(
+        tree, 
+        '├─ foo\n'
+      + '└─ bar', 
+        'Expected a simple tree structure')
     })
 
     test('Can compose a nested array tree structure', () =>
